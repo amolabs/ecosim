@@ -4,13 +4,14 @@
 The model comprises of the domain, players and non-players.
 
 ## Configuration
-- initial amount of active coins
-- simulation step size (in seconds)
+- simulation step size (in blocks or seconds)
+- simulation steps
 
 ## Domain
 ### Domain parameters
 The domain parameters are static and read-only. They are fixed unless there is
 a fork of the chain. They affect behavior of the players.
+- initial amount of active coins
 - block and tx reward
 - block size
 - block interval
@@ -34,8 +35,8 @@ input and also output of the players.
 		- sum of all stakes
 		- sum of all delegated stakes
 - tx generation rate
-- tx fee
 - number of pending txs
+- tx fee
 
 ### Derived domain variables
 calculated directly from the domain input and domain variables
@@ -101,13 +102,13 @@ or some plausible environmental change.
 - calculate tx fee based on the number of pending txs
 - calculate block and tx reward and increase active coins accordingly
 
-### Deflater
+### Depleter
 - convert small amount of active coins to lost coins (asset loss due to user
   key loss)
 - decrease small number of pending txs (tx loss due to network problem or block
   limit)
 
 ## Simulation Steps
-The simulation runs a model in steps. The model is a state machine and keeps
-its internal state which consists of various variables and the set of state
+The simulation runs in steps. The model is a state machine and keeps its
+internal state which consists of various variables and the set of state
 transfer functions.
