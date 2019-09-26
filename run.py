@@ -11,58 +11,61 @@ config = {
         'stepblks': 60*60*24, # in blocks
         'steps': 100,
         }
-domain = {
+param = {
         'initialcoins': 20000000000*oneamo,
         'txreward': 0.1*oneamo,
         'blktxsize': 1000,
         }
 state = {
-        # time
         'steps': 0,
-        'blks': 0,
-        # assets
-        'coins': 0,
-        'activecoins': 0,
-        'lostcoins': 0,
-        'stakes': 0,
-        'delstakes': 0,
-        # dynamic parameters
-        'txgen': 0,
-        'txpending': 0,
-        'txfee': 0,
+        'chain': {
+            'blks': 0,
+            # assets
+            'coins': 0,
+            'activecoins': 0,
+            'lostcoins': 0,
+            'stakes': 0,
+            'delstakes': 0,
+            # tx dynamics
+            'txgen': 0,
+            'txpending': 0,
+            'txfee': 0,
+            },
         }
 
 def display_state(state):
-    coinsamo = state['coins']/oneamo
+    chain = state['chain']
+    days = chain['blks']/60/60/24
+    print(f'run steps: {state["steps"]}, {chain["blks"]} blocks = {days} days')
+
+    coinsamo = chain['coins']/oneamo
     print(f'  coins: total  {coinsamo:-20.3f} AMO')
-    coinsamo = state['activecoins']/oneamo
+    coinsamo = chain['activecoins']/oneamo
     print(f'         active {coinsamo:-20.3f} AMO')
-    coinsamo = state['lostcoins']/oneamo
-    ratio = state['lostcoins'] / state['coins'] * 100
+    coinsamo = chain['lostcoins']/oneamo
+    ratio = chain['lostcoins'] / chain['coins'] * 100
     print(f'         lost   {coinsamo:-20.3f} AMO ({ratio:.3f}%)')
 
 def step(state):
     state['steps'] += 1
-    state['blks'] += config['stepblks']
-    state = nplayers.teller(state)
-    state = nplayers.depleter(state)
+    state['chain']['blks'] += config['stepblks']
+    state['chain'] = nplayers.teller(state['chain'])
+    state['chain'] = nplayers.depleter(state['chain'])
     return state
 
 def run(state, steps, param):
     for i in range(steps):
         state = step(state)
-    days = state['blks']/60/60/24
-    print(f'run steps: {steps}, {state["blks"]} blocks = {days} days')
     display_state(state)
     print()
     return state
 
-txrewardamo = domain['txreward']/oneamo
+txrewardamo = param['txreward']/oneamo
 print(f'tx reward: {txrewardamo} AMO / tx')
-state['activecoins'] = domain['initialcoins']
-state['coins'] = state['activecoins'] + state['lostcoins'] + state['stakes'] + state['delstakes']
+state['chain']['activecoins'] = param['initialcoins']
+state['chain'] = nplayers.sum_up_coins(state['chain'])
 
-nplayers.domain = domain
+nplayers.param = param
 
 print()
 for i in range(10):

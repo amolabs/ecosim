@@ -1,26 +1,25 @@
 # vim: set sw=4 ts=4 expandtab :
 
-def sum_up_coins(state):
-    state['coins'] = state['activecoins'] + state['lostcoins'] + state['stakes'] + state['delstakes']
-    return state
+def sum_up_coins(chain):
+    chain['coins'] = chain['activecoins'] + chain['lostcoins'] + chain['stakes'] + chain['delstakes']
+    return chain
 
-def teller(state):
-    tx_to_process = min(state['txpending'], domain['blktxsize'])
+def teller(chain):
+    tx_to_process = min(chain['txpending'], param['blktxsize'])
+    chain['txpending'] -= tx_to_process
+    reward = int(tx_to_process * param['txreward'])
+    chain['activecoins'] += reward
 
-    state['txpending'] -= tx_to_process
-    reward = int(tx_to_process * domain['txreward'])
-    state['activecoins'] += reward
+    # TODO: calc chain['txfee'] from chain['txpending']
 
-    # TODO: calc state['txfee'] from state['txpending']
+    return sum_up_coins(chain)
 
-    return sum_up_coins(state)
+def depleter(chain):
+    depletion = int(chain['activecoins'] * 0.00005) # TODO: depletion rate
+    chain['activecoins'] -= depletion
+    chain['lostcoins'] += depletion
 
-def depleter(state):
-    depletion = int(state['activecoins'] * 0.00005) # TODO: depletion rate
-    state['activecoins'] -= depletion
-    state['lostcoins'] += depletion
+    lost = int(chain['txpending'] * 0.01) # TODO: tx lost rate
+    chain['txpending'] -= lost
 
-    lost = int(state['txpending'] * 0.01) # TODO: tx lost rate
-    state['txpending'] -= lost
-
-    return sum_up_coins(state)
+    return sum_up_coins(chain)
