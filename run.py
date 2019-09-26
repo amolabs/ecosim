@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: set sw=4 ts=4 expandtab :
 
+import players
 import nplayers
 
 # const
@@ -14,15 +15,15 @@ config = {
 param = {
         'initialcoins': 20000000000*oneamo,
         'txreward': 0.1*oneamo,
-        'blktxsize': 1000,
+        'blktxsize': 100,
         }
 state = {
         'steps': 0,
         'chain': {
             'blks': 0,
             # assets
-            'coins': 0,
-            'activecoins': 0,
+            'coins': param['initialcoins'],
+            'activecoins': param['initialcoins'],
             'lostcoins': 0,
             'stakes': 0,
             'delstakes': 0,
@@ -31,6 +32,10 @@ state = {
             'txpending': 0,
             'txfee': 0,
             },
+        'market': {
+            'liveness': 0,
+            'value': 0,
+            }
         }
 
 def display_state(state):
@@ -49,24 +54,25 @@ def display_state(state):
 def step(state):
     state['steps'] += 1
     state['chain']['blks'] += config['stepblks']
-    state['chain'] = nplayers.teller(state['chain'])
-    state['chain'] = nplayers.depleter(state['chain'])
-    return state
+    players.invisible(state)
+    players.users(state)
+    nplayers.teller(state['chain'])
+    nplayers.depleter(state['chain'])
 
 def run(state, steps, param):
     for i in range(steps):
-        state = step(state)
+        step(state)
     display_state(state)
     print()
-    return state
 
 txrewardamo = param['txreward']/oneamo
 print(f'tx reward: {txrewardamo} AMO / tx')
-state['chain']['activecoins'] = param['initialcoins']
-state['chain'] = nplayers.sum_up_coins(state['chain'])
 
+players.config = config
+nplayers.config = config
+players.param = param
 nplayers.param = param
 
 print()
 for i in range(10):
-    state = run(state, config['steps'], {})
+    run(state, config['steps'], {})
