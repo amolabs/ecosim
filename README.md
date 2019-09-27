@@ -1,57 +1,67 @@
 # AMO economy simulation
 
-## Model
-The model comprises of the domain, players and non-players.
-
 ## Configuration
+### Simulation config
 - simulation step size (in blocks or seconds)
 - simulation steps
 
-## Domain
-### Domain parameters
+### Fixed domain parameters
 The domain parameters are static and read-only. They are fixed unless there is
-a fork of the chain. They affect behavior of the players.
-- initial amount of active coins
+a fork of the chain. They affect behavior of both players and non-players.
 - block and tx reward
-- block size
-- block interval
+- max number of txs in a block
+- initial amount of active coins
+- initial market liveness
+- tx generate factor: controls the number of newly generated txs
+- market growth factor: controls dynamics of market liveness
 
-These parameters may appear in modified forms.
+## Simulation Steps
+The simulation runs a model in steps. A model is a state machine and keeps its
+internal state which consists of blockchain state and market state. In every
+step, the state is changed by the state transition function, which consists of
+severral actors as defined in later sections in this document.
 
-### Domain input
-The domain input is dynamic but read-only. It is controlled outside of the
-simulation.
-- market liveness: appears as a rational number between 0 and 1
+## Simulation state
+- total number of simulation steps elapsed
+
+### Blockchain state
+Simulation statistics for tx processing:
+- total number of blocks generated (this measures time elapsed)
+- total number of txs generated
+- total number of txs processed and included in blocks
+- total number of txs lost due to computing environment
+
+Tx status:
+- current number of txs pending in blockchain nodes
+- current tx fee
+
+Asset status:
+- sum of all coins = sum of all active, lost and locked coins(stakes)
+- sum of all active coins
+- sum of all lost coins due to lost account keys and etc.
+- sum of all stakes including delegated stakes
+
+
+### Market state
+- market liveness: controls 
 - market value: total value of all goods ready to be sold in the market (in
   USD)
-
-### Domain variables
-The domain variables are dynamic and can be change in the simulation. They are
-input and also output of the players.
-- sum of all coins = sum of all active, lost and locked coins
-	- sum of all active coins
-	- sum of all lost coins
-	- sum of all locked coins = sum of all stakes and delegated stakes
-		- sum of all stakes
-		- sum of all delegated stakes
-- tx generation rate
-- number of pending txs
-- tx fee
-
-### Derived domain variables
-calculated directly from the domain input and domain variables
 - coin exchange rate (in USD per one AMO)
 
-NOTE: As in classic textbooks, coin exchange rate would be determined in some
-time by supply and demand. But, we assume this process completes almost
-instantly in the early versions of this simulation.
+*NOTE: This is the only place where we use the unit USD.*
 
-## Players
+## Player actors
 Players have their own desires and decision making principles. Each *player*
 represents all entities of the same type, and appears as a single function in
 the simulation.
 
 ### User
+CURRENT
+
+- increase the number of generated txs based on the current market liveness
+
+DRAFT
+
 User represents the whole set of users.
 
 #### desires
@@ -76,6 +86,14 @@ User represents the whole set of users.
 - increase/decrease delegated stakes
 
 ### Validator
+CURRENT
+
+- increase/decrease staked coins based on the number of pending txs, tx fee and
+  tx reward
+- increase/decrease the sum of active coins accordingly
+
+DRAFT
+
 Validator represents the whole set of validators.
 
 #### desires
@@ -91,24 +109,22 @@ Validator represents the whole set of validators.
 #### effect
 - increase/decrease stake
 
-## Non-players
-Non-players don't have their own desires and don't decide anything. Each
-non-player just calculate its output from the input based on the pre-determined
-rules. Non-players represents activities from AMO blockchain protocol execution
-or some plausible environmental change.
+## Non-player actors
+Non-players don't have their own desires. Each non-player just calculate its
+output from the input based on the pre-determined rules. Non-players represents
+activities from AMO blockchain protocol execution or some environmental change.
 
 ### Teller
 - decrease the number of pending txs based on block size
-- calculate tx fee based on the number of pending txs
 - calculate block and tx reward and increase active coins accordingly
+- calculate tx fee based on the number of pending txs<br/>
+  *NOTE: Tx fee is zero when there is no pending txs.*
 
 ### Depleter
-- convert small amount of active coins to lost coins (asset loss due to user
-  key loss)
+- convert small amount of active coins to lost coins (asset loss due to lost
+  account keys)
 - decrease small number of pending txs (tx loss due to network problem or block
   limit)
 
-## Simulation Steps
-The simulation runs in steps. The model is a state machine and keeps its
-internal state which consists of various variables and the set of state
-transfer functions.
+### Invisible hand
+- update market liveness based on the current tx fee and market growth factor

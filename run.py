@@ -16,18 +16,19 @@ param = {
         'txreward': 0.1*oneamo,
         'blktxsize': 100,
         # market parameters
+        'initialliveness': 0.1,
         'txgenbase': 1, # per block
         'growth_factor': 1.1,
-        'initialliveness': 0.1,
         }
 state = {
         'steps': 0,
         'chain': {
-            'blks': 0,
-            # tx dynamics
+            # tx statistics
             'txgen': 0,
             'txproc': 0,
             'txlost': 0,
+            # tx dynamics
+            'blks': 0,
             'txpending': 0,
             'txfee': 0,
             # assets
@@ -72,9 +73,9 @@ def step(state):
     state['chain']['blks'] += config['stepblks']
     players.users(state)
     players.validators(state)
-    nplayers.invisible(state)
     nplayers.teller(state['chain'])
     nplayers.depleter(state['chain'])
+    nplayers.invisible(state)
 
 def run(state, steps, param):
     for i in range(steps):

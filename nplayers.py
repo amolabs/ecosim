@@ -7,14 +7,6 @@ FEECAP = 10000*oneamo
 def sum_up_coins(chain):
     chain['coins'] = chain['activecoins'] + chain['lostcoins'] + chain['stakes']
 
-# invisible hand
-def invisible(state):
-    # update liveness
-    fee_factor = FEECAP / (state['chain']['txfee'] + FEECAP)
-    tmp = state['market']['liveness'] * fee_factor * param['growth_factor']
-    tmp = max(tmp, 0.001) # TODO: minimum liveness
-    state['market']['liveness'] = tmp
-
 def teller(chain):
     tx_to_process = min(
             chain['txpending'],
@@ -42,3 +34,12 @@ def depleter(chain):
     chain['txpending'] -= txlost
     # sum up
     sum_up_coins(chain)
+
+# invisible hand
+def invisible(state):
+    # update liveness
+    fee_factor = FEECAP / (state['chain']['txfee'] + FEECAP)
+    tmp = state['market']['liveness'] * fee_factor * param['growth_factor']
+    tmp = max(tmp, 0.001) # TODO: minimum liveness
+    state['market']['liveness'] = tmp
+
