@@ -43,10 +43,10 @@ Asset status:
 
 
 ### Market state
-- market liveness: controls 
-- market value: total value of all goods ready to be sold in the market (in
-  USD)
-- coin exchange rate (in USD per one AMO)
+- market liveness: controls the number of newly generated txs
+- <s>market value: total value of all goods ready to be sold in the market (in
+  USD)</s>
+- <s>coin exchange rate (in USD per one AMO)</s>
 
 *NOTE: This is the only place where we use the unit USD.*
 
