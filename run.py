@@ -5,6 +5,7 @@
 from const import *
 import players
 import nplayers
+import matplotlib.pyplot as plt
 
 config = {
         'stepblks': 60*60, # in blocks
@@ -94,10 +95,33 @@ def step(state):
     nplayers.depleter(state['chain'])
     nplayers.invisible(state)
 
-def run(state, param):
+def run(state):
+    steps = []
+    y_txgen = []
+    y_coins = []
+    y_txfee = []
+    y_interest = []
+    y_liveness = []
+    y_active = []
+    y_stakes = []
     for i in range(config['steps']):
         step(state)
+        steps.append(state['steps'])
+        y_txgen.append(state['chain']['stat_txgen'])
+        y_coins.append(state['chain']['coins'])
+        y_txfee.append(state['chain']['txfee'])
+        y_interest.append(state['market']['interest_chain'])
+        y_liveness.append(state['market']['liveness'])
+        y_active.append(state['chain']['coins_active'])
+        y_stakes.append(state['chain']['stakes'])
     display_state(state)
+    #plt.plot(steps, y_txgen)
+    #plt.plot(steps, y_coins)
+    #plt.plot(steps, y_txfee)
+    #plt.plot(steps, y_interest)
+    #plt.plot(steps, y_liveness)
+    plt.plot(steps, y_active)
+    plt.plot(steps, y_stakes)
     print()
 
 coinsamo = param['initial_coins']/oneamo
@@ -113,4 +137,8 @@ nplayers.param = param
 
 print( '==================================================================')
 for i in range(10):
-    run(state, {})
+    run(state)
+
+plt.xlabel('steps')
+#plt.ylabel('ylabel')
+plt.show()
