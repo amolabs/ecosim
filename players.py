@@ -15,6 +15,6 @@ def validators(state):
     chain = state['chain']
     # augment with tx fee
     upstake = int(chain['txpending'] * (chain['txfee'] + param['txreward']))
-    upstake = min(upstake, chain['activecoins'])
+    upstake = min(upstake, chain['coins_active'])
     chain['stakes'] += upstake
-    chain['activecoins'] -= upstake
+    chain['coins_active'] -= upstake

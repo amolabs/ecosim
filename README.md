@@ -8,10 +8,16 @@
 ### Fixed domain parameters
 The domain parameters are static and read-only. They are fixed unless there is
 a fork of the chain. They affect behavior of both players and non-players.
+
+chain parameters:
+- initial amount of active coins
 - block and tx reward
 - max number of txs in a block
-- initial amount of active coins
+
+market parameters:
 - initial market liveness
+- initial market value
+- initial coin exchange rate
 - tx generate factor: controls the number of newly generated txs
 - market growth factor: controls dynamics of market liveness
 
@@ -22,6 +28,8 @@ step, the state is changed by the state transition function, which consists of
 severral actors as defined in later sections in this document.
 
 ## Simulation state
+### General
+Simulation statistics:
 - total number of simulation steps elapsed
 
 ### Blockchain state
@@ -46,7 +54,7 @@ Asset status:
 - market liveness: controls the number of newly generated txs
 - <s>market value: total value of all goods ready to be sold in the market (in
   USD)</s>
-- <s>coin exchange rate (in USD per one AMO)</s>
+- coin exchange rate (in USD for one AMO)
 
 *NOTE: This is the only place where we use the unit USD.*
 

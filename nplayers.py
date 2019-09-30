@@ -2,10 +2,8 @@
 
 from const import *
 
-FEECAP = 10000*oneamo
-
 def sum_up_coins(chain):
-    chain['coins'] = chain['activecoins'] + chain['lostcoins'] + chain['stakes']
+    chain['coins'] = chain['coins_active'] + chain['coins_lost'] + chain['stakes']
 
 def teller(chain):
     tx_to_process = min(
@@ -16,7 +14,7 @@ def teller(chain):
     chain['txpending'] -= tx_to_process
     # reward
     reward = int(tx_to_process * param['txreward'])
-    chain['activecoins'] += reward
+    chain['coins_active'] += reward
     # TODO: use more plausible formula
     chain['txfee'] = int(chain['txpending'] * oneamo * 0.01)
     #chain['txfee'] = 0
@@ -25,9 +23,9 @@ def teller(chain):
 
 def depleter(chain):
     # asset loss
-    depletion = int(chain['activecoins'] * 0.0001) # TODO: depletion rate
-    chain['activecoins'] -= depletion
-    chain['lostcoins'] += depletion
+    depletion = int(chain['coins_active'] * 0.0001) # TODO: depletion rate
+    chain['coins_active'] -= depletion
+    chain['coins_lost'] += depletion
     # tx loss
     txlost = int(chain['txpending'] * 0.0001) # TODO: tx lost rate
     chain['txlost'] += txlost
@@ -38,7 +36,7 @@ def depleter(chain):
 # invisible hand
 def invisible(state):
     # update liveness
-    fee_factor = FEECAP / (state['chain']['txfee'] + FEECAP)
+    fee_factor = param['feecap'] / (state['chain']['txfee'] + param['feecap'])
     tmp = state['market']['liveness'] * fee_factor * param['growth_factor']
     tmp = max(tmp, 0.001) # TODO: minimum liveness
     state['market']['liveness'] = tmp
