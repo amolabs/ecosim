@@ -8,28 +8,34 @@ import nplayers
 
 config = {
         'stepblks': 60*60, # in blocks
-        'steps': 24*365,
+        'steps': 24*30,
+        #'steps': 1,
         }
 param = {
         # chain parameters
         'initial_coins': 20000000000*oneamo,
         'txreward': 0.1*oneamo,
         'blktxsize': 100,
-        'feecap': 10000*oneamo,
+        'feescale': 1.0,
+        'max_stakechange': 1000000*oneamo,
         # market parameters
         'initial_liveness': 0,
         'initial_value': 0,
-        'initial_exchrate': 0, # USD for one AMO
+        'initial_exchrate': 0.0005, # USD for one AMO
         'txgenbase': 1, # per block
         'growth_factor': 1.1,
+        'initial_interest_world': 0.02,
+        # depeletion rates
+        'deplete_coin': 0.000001,
+        'deplete_tx': 0.000001,
         }
 state = {
         'steps': 0,
         'chain': {
             # tx statistics
-            'txgen': 0,
-            'txproc': 0,
-            'txlost': 0,
+            'stat_txgen': 0,
+            'stat_txproc': 0,
+            'stat_txlost': 0,
             # tx dynamics
             'blks': 0,
             'txpending': 0,
@@ -44,15 +50,17 @@ state = {
             'liveness': param['initial_liveness'],
             'value': param['initial_value'],
             'exchange_rate': param['initial_exchrate'], # in AMO, not mote
+            'interest_chain': 0,
+            'interest_world': param['initial_interest_world'],
             }
         }
 
 def display_state(state):
     chain = state['chain']
     days = chain['blks']/60/60/24
-    print(f'run steps: {state["steps"]}, {chain["blks"]} blocks = {days} days')
+    print(f'run steps: {state["steps"]}, {chain["blks"]} blocks = {days:.2f} days')
     # chain stat
-    print(f'tx: {chain["txgen"]:-12,d}(+) {chain["txproc"]:-12,d}(-)  {chain["txlost"]:-7,d} lost  {chain["txpending"]:-6,d} pending')
+    print(f'tx: {chain["stat_txgen"]:-12,d}(+) {chain["stat_txproc"]:-12,d}(-)  {chain["stat_txlost"]:-7,d} lost  {chain["txpending"]:-6,d} pending')
     coinsamo = chain['txfee']/oneamo
     print(f'  tx fee:               {coinsamo:-20,.3f} AMO / tx')
     # assets
@@ -67,11 +75,15 @@ def display_state(state):
     coinsamo = chain['stakes']/oneamo
     ratio = chain['stakes'] / chain['coins'] * 100
     print(f'          stakes        {coinsamo:-20,.3f} AMO ({ratio:.3f}%)')
+    #print(f'          stakes(mote)  {chain["stakes"]:-20,} mote')
     # market
     market = state['market']
     print(f'  market: value         {market["value"]:-20,.3f} USD')
     print(f'          exchange      {market["exchange_rate"]:-21,.4f} USD/AMO')
     print(f'          liveness      {market["liveness"]:-21,.4f}')
+    print(f'          interest      {market["interest_chain"]:-21,.4f}')
+    print(f'  debug1 = {players.debug1:,}')
+    #print(f'  debug1 = {nplayers.debug1:,}')
 
 def step(state):
     state['steps'] += 1
@@ -100,5 +112,5 @@ players.param = param
 nplayers.param = param
 
 print( '==================================================================')
-for i in range(5):
+for i in range(10):
     run(state, {})

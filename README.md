@@ -96,6 +96,15 @@ User represents the whole set of users.
 ### Validator
 CURRENT
 
+Calculate the following:
+- gain per one AMO from chain: expected income in USD from stakes
+- gain per one AMO from market: expected income in USD by selling coins
+
+If the gain from the chain is higher than the gain from the market, increase
+stakes and decrease active coins. Otherwise, decrease stakes and increase
+active coins.
+
+
 - increase/decrease staked coins based on the number of pending txs, tx fee and
   tx reward
 - increase/decrease the sum of active coins accordingly
@@ -125,8 +134,6 @@ activities from AMO blockchain protocol execution or some environmental change.
 ### Teller
 - decrease the number of pending txs based on block size
 - calculate block and tx reward and increase active coins accordingly
-- calculate tx fee based on the number of pending txs<br/>
-  *NOTE: Tx fee is zero when there is no pending txs.*
 
 ### Depleter
 - convert small amount of active coins to lost coins (asset loss due to lost
@@ -136,3 +143,5 @@ activities from AMO blockchain protocol execution or some environmental change.
 
 ### Invisible hand
 - update market liveness based on the current tx fee and market growth factor
+- calculate tx fee based on the number of pending txs<br/>
+  *NOTE: Tx fee is zero when there is no pending txs.*

@@ -1,3 +1,8 @@
 # vim: set sw=4 ts=4 expandtab :
 
 oneamo = 1000000000000000000
+
+DELTA_AMO = 0.000000001 # 10^-9 AMO
+DELTA_MOTE = 1000000000 # 10^9 mote
+BLKSYEAR = 60*60*24*365
+
