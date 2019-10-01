@@ -18,7 +18,7 @@ param = {
         'txreward': 0.1*oneamo,
         'blktxsize': 100,
         'feescale': 1.0,
-        'max_stakechange': 1000000*oneamo,
+        'max_stakechange': 10000*oneamo,
         # market parameters
         'initial_liveness': 0,
         'initial_value': 0,
@@ -108,16 +108,16 @@ def run(state):
         step(state)
         steps.append(state['steps'])
         y_txgen.append(state['chain']['stat_txgen'])
-        y_coins.append(state['chain']['coins'])
-        y_txfee.append(state['chain']['txfee'])
+        y_coins.append(state['chain']['coins']/oneamo)
+        y_txfee.append(state['chain']['txfee']/oneamo)
         y_interest.append(state['market']['interest_chain'])
         y_liveness.append(state['market']['liveness'])
-        y_active.append(state['chain']['coins_active'])
-        y_stakes.append(state['chain']['stakes'])
+        y_active.append(state['chain']['coins_active']/oneamo)
+        y_stakes.append(state['chain']['stakes']/oneamo)
     display_state(state)
     #plt.plot(steps, y_txgen)
     #plt.plot(steps, y_coins)
-    #plt.plot(steps, y_txfee)
+    #plt.plot(steps, y_txfee, '.-r')
     plt.plot(steps, y_interest, '-y')
     plt.plot(steps, y_liveness, '-g')
     plt.plot(steps, y_active, '-r')

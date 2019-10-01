@@ -23,8 +23,8 @@ def validators(state):
     sc = chain['stakes']
     upforce = (ic * (sc + DELTA_MOTE) / iw) - sc
 
-    upforce = min(upforce, param['max_stakechange'])
-    upforce = max(upforce, -param['max_stakechange'])
+    upforce = min(upforce, param['max_stakechange']*config['stepblks'])
+    upforce = max(upforce, -param['max_stakechange']*config['stepblks'])
 
     # mimic human unpredictability using random variable
     rv = stats.norm()

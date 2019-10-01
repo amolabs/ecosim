@@ -33,11 +33,14 @@ def invisible(state):
     global debug1, debug2
 
     # update tx fee
-    # TODO: use more plausible formula
-    fee_usd = chain['txpending'] * param['feescale'] * 0.0001
-    #print(f'fee_use ={fee_usd}')
-    chain['txfee'] = int(fee_usd / market['exchange_rate'] * oneamo)
-    #chain['txfee'] = 0
+    # estimate remaining blocks until all of the currently pending txs would be
+    # processed
+    # one param['feescale'] USD for one day
+    blks = chain['txpending'] / param['blktxsize']
+    fee_usd = param['feescale'] * blks / (60*60*24)
+    # update
+    fee = int(fee_usd / market['exchange_rate'] * oneamo)
+    chain['txfee'] = int((fee + 9*chain['txfee']) / 10)
 
     # update liveness
     tmp = market['liveness']
