@@ -59,9 +59,10 @@ Asset status:
 *NOTE: This is the only place where we use the unit USD.*
 
 ## Player actors
-Players have their own desires and decision making principles. Each *player*
-represents all entities of the same type, and appears as a single function in
-the simulation.
+Players have their own desires and decision making principles. To mimic
+real-world human decisions, a few random variables are used when calculating
+their decisions. Each *player* represents all entities of the same type, and
+appears as a single function in the simulation.
 
 ### User
 CURRENT
@@ -127,9 +128,10 @@ Validator represents the whole set of validators.
 - increase/decrease stake
 
 ## Non-player actors
-Non-players don't have their own desires. Each non-player just calculate its
-output from the input based on the pre-determined rules. Non-players represents
-activities from AMO blockchain protocol execution or some environmental change.
+Non-players don't have their own desires, so no random variable is used when
+calculating their actions. Each non-player just calculate its output from the
+input based on the pre-determined rules. Non-players represents activities from
+AMO blockchain protocol execution or some environmental change.
 
 ### Teller
 - decrease the number of pending txs based on block size

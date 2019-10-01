@@ -83,7 +83,7 @@ def display_state(state):
     print(f'          exchange      {market["exchange_rate"]:-21,.4f} USD/AMO')
     print(f'          liveness      {market["liveness"]:-21,.4f}')
     print(f'          interest      {market["interest_chain"]:-21,.4f}')
-    print(f'  debug1 = {players.debug1:,}')
+    #print(f'  debug1 = {players.debug1:,}')
     #print(f'  debug1 = {nplayers.debug1:,}')
 
 def step(state):
@@ -118,10 +118,10 @@ def run(state):
     #plt.plot(steps, y_txgen)
     #plt.plot(steps, y_coins)
     #plt.plot(steps, y_txfee)
-    #plt.plot(steps, y_interest)
-    #plt.plot(steps, y_liveness)
-    plt.plot(steps, y_active)
-    plt.plot(steps, y_stakes)
+    plt.plot(steps, y_interest, '-y')
+    plt.plot(steps, y_liveness, '-g')
+    plt.plot(steps, y_active, '-r')
+    plt.plot(steps, y_stakes, '-b')
     print()
 
 coinsamo = param['initial_coins']/oneamo
@@ -141,4 +141,5 @@ for i in range(10):
 
 plt.xlabel('steps')
 #plt.ylabel('ylabel')
+plt.yscale('log')
 plt.show()

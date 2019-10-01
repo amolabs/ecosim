@@ -1,6 +1,7 @@
 # vim: set sw=4 ts=4 expandtab :
 
 from const import *
+from scipy import stats
 
 def users(state):
     chain = state['chain']
@@ -17,13 +18,17 @@ def validators(state):
 
     global debug1, debug2
 
-    #upstake = int((market['interest_chain'] - market['interest_world'])*oneamo)
-    if market['interest_chain'] > market['interest_world']:
-        upstake = int((chain['stakes'] + DELTA_MOTE) * 0.1) # 10% up
-    elif market['interest_chain'] < market['interest_world']:
-        upstake = -int(chain['stakes'] * 0.1) # 10% down
-    else:
-        upstake = 0
+    ic = market['interest_chain']
+    iw = market['interest_world']
+    sc = chain['stakes']
+    upforce = (ic * (sc + DELTA_MOTE) / iw) - sc
+
+    upforce = min(upforce, param['max_stakechange'])
+    upforce = max(upforce, -param['max_stakechange'])
+
+    # mimic human unpredictability using random variable
+    rv = stats.norm()
+    upstake = upforce / 2 * rv.rvs() + upforce
 
     upstake = min(upstake, chain['coins_active'])
     upstake = max(upstake, -chain['stakes'])

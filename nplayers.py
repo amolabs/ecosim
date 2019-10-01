@@ -50,11 +50,11 @@ def invisible(state):
     tmp = max(tmp, 0.001)
     market['liveness'] = tmp
 
-    # interest rate of the chain
+    # projected yearly interest of the chain
     # (augment with very small bias to chain)
     gain_chain = tx_to_process \
             * (chain['txfee'] + param['txreward']) \
             * BLKSYEAR / config['stepblks'] \
             / (chain['stakes'] + DELTA_MOTE)
+    #market['interest_chain'] = min(gain_chain, 10000)
     market['interest_chain'] = gain_chain
-
