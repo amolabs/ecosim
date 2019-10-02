@@ -9,19 +9,20 @@ import matplotlib.pyplot as plt
 
 config = {
         'stepblks': 60*60, # in blocks
-        'steps': 24*30,
-        #'steps': 1,
+        #'steps': 24*365,
+        'steps': 24*50,
         }
 param = {
         # chain parameters
         'initial_coins': 20000000000*oneamo,
+        'initial_stakes': 10000000*oneamo,
         'txreward': 0.1*oneamo,
         'blktxsize': 100,
         'feescale': 1.0,
         'max_stakechange': 10000*oneamo,
         # market parameters
         'initial_liveness': 0,
-        'initial_value': 0,
+        'initial_value': 0, # TODO
         'initial_exchrate': 0.0005, # USD for one AMO
         'txgenbase': 1, # per block
         'growth_factor': 1.1,
@@ -43,13 +44,13 @@ state = {
             'txfee': 0,
             # assets
             'coins': param['initial_coins'],
-            'coins_active': param['initial_coins'],
+            'coins_active': param['initial_coins'] - param['initial_stakes'],
             'coins_lost': 0,
-            'stakes': 0,
+            'stakes': param['initial_stakes'],
             },
         'market': {
             'liveness': param['initial_liveness'],
-            'value': param['initial_value'],
+            'value': param['initial_exchrate'] * param['initial_coins'] / oneamo,
             'exchange_rate': param['initial_exchrate'], # in AMO, not mote
             'interest_chain': 0,
             'interest_world': param['initial_interest_world'],
@@ -102,6 +103,8 @@ def run(state):
     y_txfee = []
     y_interest = []
     y_liveness = []
+    y_exchange = []
+    y_value = []
     y_active = []
     y_stakes = []
     for i in range(config['steps']):
@@ -112,14 +115,18 @@ def run(state):
         y_txfee.append(state['chain']['txfee']/oneamo)
         y_interest.append(state['market']['interest_chain'])
         y_liveness.append(state['market']['liveness'])
+        y_exchange.append(state['market']['exchange_rate'])
+        y_value.append(state['market']['value'])
         y_active.append(state['chain']['coins_active']/oneamo)
         y_stakes.append(state['chain']['stakes']/oneamo)
     display_state(state)
     #plt.plot(steps, y_txgen)
     #plt.plot(steps, y_coins)
     #plt.plot(steps, y_txfee, '.-r')
-    plt.plot(steps, y_interest, '-y')
-    plt.plot(steps, y_liveness, '-g')
+    plt.plot(steps, y_interest, '-y', 'interest')
+    plt.plot(steps, y_liveness, '-m')
+    plt.plot(steps, y_exchange, '-g')
+    plt.plot(steps, y_value, '-k')
     plt.plot(steps, y_active, '-r')
     plt.plot(steps, y_stakes, '-b')
     print()
@@ -136,8 +143,8 @@ players.param = param
 nplayers.param = param
 
 print( '==================================================================')
-for i in range(10):
-    run(state)
+#for i in range(5):
+run(state)
 
 plt.xlabel('steps')
 #plt.ylabel('ylabel')

@@ -61,3 +61,9 @@ def invisible(state):
             / (chain['stakes'] + DELTA_MOTE)
     #market['interest_chain'] = min(gain_chain, 10000)
     market['interest_chain'] = gain_chain
+
+    # update exchange rate
+    # TODO: use dynamic market value
+    exch = market['value'] / (chain['coins_active'] / oneamo)
+    market['exchange_rate'] = (exch + 9*market['exchange_rate']) / 10
+    market['value'] = (chain['coins_active'] / oneamo) * market['exchange_rate']
