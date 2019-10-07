@@ -15,17 +15,17 @@ config = {
 param = {
         # chain parameters
         'initial_coins': 20000000000*oneamo,
-        'initial_stakes': 10000000*oneamo,
+        'initial_stakes': 1000000*oneamo,
         'txreward': 0.1*oneamo,
-        'blktxsize': 100,
+        'blktxsize': 1000,
         'feescale': 1.0,
         'max_stakechange': 10000*oneamo,
         # market parameters
         'initial_liveness': 0,
-        'initial_value': 0, # TODO
+        'initial_value': 0,
         'initial_exchrate': 0.0005, # USD for one AMO
         'txgenbase': 1, # per block
-        'growth_factor': 1.1,
+        'growth_factor': 1.001,
         'initial_interest_world': 0.02,
         # depeletion rates
         'deplete_coin': 0.000001,
@@ -50,7 +50,7 @@ state = {
             },
         'market': {
             'liveness': param['initial_liveness'],
-            'value': param['initial_exchrate'] * param['initial_coins'] / oneamo,
+            'value': param['initial_value'],
             'exchange_rate': param['initial_exchrate'], # in AMO, not mote
             'interest_chain': 0,
             'interest_world': param['initial_interest_world'],
@@ -99,6 +99,7 @@ def step(state):
 def run(state):
     steps = []
     y_txgen = []
+    y_txpen = []
     y_coins = []
     y_txfee = []
     y_interest = []
@@ -111,6 +112,7 @@ def run(state):
         step(state)
         steps.append(state['steps'])
         y_txgen.append(state['chain']['stat_txgen'])
+        y_txpen.append(state['chain']['txpending'])
         y_coins.append(state['chain']['coins']/oneamo)
         y_txfee.append(state['chain']['txfee']/oneamo)
         y_interest.append(state['market']['interest_chain'])
@@ -120,9 +122,10 @@ def run(state):
         y_active.append(state['chain']['coins_active']/oneamo)
         y_stakes.append(state['chain']['stakes']/oneamo)
     display_state(state)
-    #plt.plot(steps, y_txgen)
+    #plt.plot(steps, y_txgen, '--k')
+    plt.plot(steps, y_txpen, '--g')
     #plt.plot(steps, y_coins)
-    #plt.plot(steps, y_txfee, '.-r')
+    plt.plot(steps, y_txfee, '--r')
     plt.plot(steps, y_interest, '-y', 'interest')
     plt.plot(steps, y_liveness, '-m')
     plt.plot(steps, y_exchange, '-g')

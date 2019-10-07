@@ -6,8 +6,14 @@ from scipy import stats
 def users(state):
     chain = state['chain']
     market = state['market']
-    # txs
-    newtxs = int(param['txgenbase'] * market['liveness'] * config['stepblks'])
+
+    # generate txs depending on liveness
+    txforce = param['txgenbase'] * market['liveness'] * config['stepblks']
+    # mimic human unpredictability using random variable
+    rv = stats.norm()
+    newtxs = txforce / 2 * rv.rvs() + txforce
+    newtxs = int(newtxs)
+
     # TODO: desires to sell or buy
     chain['stat_txgen'] = newtxs
     chain['txpending'] += newtxs
@@ -29,6 +35,7 @@ def validators(state):
     # mimic human unpredictability using random variable
     rv = stats.norm()
     upstake = upforce / 2 * rv.rvs() + upforce
+    upstake = int(upstake)
 
     upstake = min(upstake, chain['coins_active'])
     upstake = max(upstake, -chain['stakes'])
