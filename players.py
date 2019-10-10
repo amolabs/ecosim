@@ -29,6 +29,7 @@ def validators(state):
     sc = chain['stakes']
     upforce = (ic * (sc + DELTA_MOTE) / iw) - sc
 
+    # limit by max stake change
     upforce = min(upforce, param['max_stakechange']*config['stepblks'])
     upforce = max(upforce, -param['max_stakechange']*config['stepblks'])
 
@@ -37,6 +38,7 @@ def validators(state):
     upstake = upforce / 2 * rv.rvs() + upforce
     upstake = int(upstake)
 
+    # limit by asset status
     upstake = min(upstake, chain['coins_active'])
     upstake = max(upstake, -chain['stakes'])
     debug1 = upstake

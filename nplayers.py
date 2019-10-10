@@ -69,12 +69,12 @@ def invisible(state):
 
     # projected yearly interest of the chain
     # (augment with very small bias to chain)
-    gain_chain = tx_to_process \
+    gain_chain_year = tx_to_process \
             * (chain['txfee'] + param['txreward']) \
-            * BLKSYEAR / config['stepblks'] \
-            / (chain['stakes'] + DELTA_MOTE)
-    market['interest_chain'] = min(gain_chain, 100)
-    #market['interest_chain'] = gain_chain
+            * BLKSYEAR / config['stepblks']
+    interest = gain_chain_year / (chain['stakes'] + DELTA_MOTE)
+    market['interest_chain'] = min(interest, 100)
+    #market['interest_chain'] = interest
 
     # update exchange rate
     exch = market['value'] \

@@ -123,7 +123,7 @@ def run(state):
         y_active.append(state['chain']['coins_active']/oneamo)
         y_stakes.append(state['chain']['stakes']/oneamo)
     display_state(state)
-    #plt.plot(steps, y_txgen, '--k')
+    plt.plot(steps, y_txgen, '--k')
     plt.plot(steps, y_txpen, '--g')
     #plt.plot(steps, y_coins)
     plt.plot(steps, y_txfee, '--r')
