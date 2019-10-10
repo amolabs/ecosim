@@ -11,6 +11,7 @@ config = {
         'stepblks': 60*60, # in blocks
         #'steps': 24*365,
         'steps': 24*50,
+        'smooth': 50000,
         }
 param = {
         # chain parameters

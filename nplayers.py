@@ -50,21 +50,22 @@ def invisible(state):
     fee_usd = param['feescale'] * blks / (60*60*24) # in USD
     fee = int(fee_usd / market['exchange_rate'] * oneamo) # in mote
     # update
-    chain['txfee'] = int((fee + 9*chain['txfee']) / 10)
+    smooth = config['smooth'] / config['stepblks']
+    chain['txfee'] = int((fee + (smooth-1)*chain['txfee']) / smooth)
 
     # update liveness
     tmp = market['liveness']
-    # inflation by growth factor
-    # suppression by tx fee
+    # increase by growth factor
+    f = math.pow(param['growth_factor'], config['stepblks'])
+    ## suppress by tx fee
     fee_usd = chain['txfee'] / oneamo * market['exchange_rate']
-    fee_factor = param['growth_factor'] * param['feescale'] / (fee_usd + param['feescale'])
-    #print('before', fee_factor)
-    fee_factor = math.log10(fee_factor) + 1
-    #print('after', fee_factor)
-    tmp *= math.pow(fee_factor, config['stepblks'])
+    f *= param['feescale'] / (fee_usd * config['stepblks'] + param['feescale'])
+    #fee_factor = math.log10(fee_factor) + 1
+    tmp *= f
     # TODO: minimum liveness
     tmp = max(tmp, 0.001)
-    market['liveness'] = (tmp + 9*market['liveness']) / 10
+    smooth = config['smooth'] / config['stepblks']
+    market['liveness'] = (tmp + (smooth-1)*market['liveness']) / smooth
 
     # projected yearly interest of the chain
     # (augment with very small bias to chain)
@@ -80,5 +81,6 @@ def invisible(state):
             / (chain['coins_active'] + chain['stakes'] * 0.0001) \
             * oneamo
     # update
-    market['exchange_rate'] = (exch + 9*market['exchange_rate']) / 10
+    smooth = config['smooth'] / config['stepblks']
+    market['exchange_rate'] = (exch + (smooth-1)*market['exchange_rate']) / smooth
     #market['exchange_rate'] = exch
