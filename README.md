@@ -140,8 +140,47 @@ increase force and <img src="/tex/6dec54c48a0438a5fcde6053bdb9d712.svg?invert_in
 distribution. The total amount of stakes is adjusted according to the total
 amount of coins.
 
-The stake increase force <img src="/tex/8cda31ed38c6d59d14ebefa440099572.svg?invert_in_darkmode&sanitize=true" align=middle width=9.98290094999999pt height=14.15524440000002pt/> is \$sigma _ i = \frac{i _ i s _ {i - 1}}{i _
-w} - s _ {i - 1}<img src="/tex/68e6b9bbfa397ea50739b1c5e352feda.svg?invert_in_darkmode&sanitize=true" align=middle width=52.169074649999985pt height=22.831056599999986pt/>i _ w<img src="/tex/79d6f772471a0dd84f15ab931e58b258.svg?invert_in_darkmode&sanitize=true" align=middle width=700.27475595pt height=677.077632pt/>n<img src="/tex/8ae9a6bfadae63ae74c4656485935fe3.svg?invert_in_darkmode&sanitize=true" align=middle width=111.12818639999999pt height=24.65753399999998pt/>t _ {avg}= \frac{\sum _ {i=1}^{n}{t _ i}}{n}<img src="/tex/68e6b9bbfa397ea50739b1c5e352feda.svg?invert_in_darkmode&sanitize=true" align=middle width=52.169074649999985pt height=22.831056599999986pt/>t _ i<img src="/tex/86f734f42273f64464f2696c12769a3d.svg?invert_in_darkmode&sanitize=true" align=middle width=270.13827885pt height=22.831056599999986pt/>i$.
+The stake increase force <img src="/tex/8cda31ed38c6d59d14ebefa440099572.svg?invert_in_darkmode&sanitize=true" align=middle width=9.98290094999999pt height=14.15524440000002pt/> is <img src="/tex/16394eab4da4a5f5705f407bab0a05cc.svg?invert_in_darkmode&sanitize=true" align=middle width=161.2990764pt height=31.44748200000001pt/>, where <img src="/tex/0d255faee4aa69be1186992f1f423a25.svg?invert_in_darkmode&sanitize=true" align=middle width=15.48254894999999pt height=21.68300969999999pt/> is the interest rate of the outer world.
+
+#### TODO
+- desires
+	- want to sell coins (in USD)
+	- want to buy coins (in USD)
+
+## Non-player actors
+Non-players don't have their own desires, so no random variable is used when
+calculating their actions. Each non-player just calculate its output from the
+input based on the pre-determined rules. Non-players represents activities from
+AMO blockchain protocol execution or some environmental change.
+
+### Teller
+Represents block generation process of the AMO blockchain protocol.
+- process txs (decrease the number of pending txs)
+- calculate block and tx reward and increase active coins accordingly
+
+#### state change
+The number of processed txs is the mininum of the number of pending txs and
+maximum tx capacity of one simulation step.
+
+### Depleter
+- convert small amount of active coins to lost coins (asset loss due to lost
+  account keys)
+- decrease small number of pending txs (tx loss due to network problem or block
+  limit)
+
+### Invisible hand
+Represents the supply-demand effect of the chain and amrket.
+- update tx fee
+- update coin exchange rate
+
+#### conditions
+- the number of pending txs
+- market value
+- the amount of stakes and the amount of active coins
+
+The average number of pending txs during the recent <img src="/tex/55a049b8f161ae7cfeb0197d75aff967.svg?invert_in_darkmode&sanitize=true" align=middle width=9.86687624999999pt height=14.15524440000002pt/> blocks:<br/>
+<img src="/tex/6feda45573998852ae5f97c1c4712a7b.svg?invert_in_darkmode&sanitize=true" align=middle width=97.07263664999999pt height=34.8495345pt/>, where <img src="/tex/4b3df27b02447b02ec8ccfe5432e6f38.svg?invert_in_darkmode&sanitize=true" align=middle width=10.58699729999999pt height=20.221802699999984pt/> is the number of
+pending txs for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/>.
 
 #### state change
 TODO
