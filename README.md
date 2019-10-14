@@ -79,29 +79,30 @@ appears as a single function in the simulation.
 Represents user activities in the chain and market.
 - update market liveness
 - update market value
-- generates txs
+- generates txs (increase the number of pending txs)
 
 #### conditions
 - recent tx fee
 
 The recent tx fee is the average fee during the recent <img src="/tex/55a049b8f161ae7cfeb0197d75aff967.svg?invert_in_darkmode&sanitize=true" align=middle width=9.86687624999999pt height=14.15524440000002pt/> blocks:<br/>
-<img src="/tex/ca19c79ddce1a75b1a8ea4bf5c4530be.svg?invert_in_darkmode&sanitize=true" align=middle width=100.62865229999998pt height=34.8495345pt/>.
+<img src="/tex/ca19c79ddce1a75b1a8ea4bf5c4530be.svg?invert_in_darkmode&sanitize=true" align=middle width=100.62865229999998pt height=34.8495345pt/>, where <img src="/tex/c36aec8fe0f01b5750777bb772c5e87f.svg?invert_in_darkmode&sanitize=true" align=middle width=12.69888674999999pt height=22.831056599999986pt/> is the tx fee for
+the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/>.
 
 The suppressing factor <img src="/tex/3e18a4a28fdee1744e5e3f79d13b9ff6.svg?invert_in_darkmode&sanitize=true" align=middle width=7.11380504999999pt height=14.15524440000002pt/> by the tx fee is:<br/>
 <img src="/tex/ff2f17f31efade69b738b5b5340c9c78.svg?invert_in_darkmode&sanitize=true" align=middle width=100.93170944999999pt height=30.648287999999997pt/>.
 
 #### state change
 The market liveness <img src="/tex/5acce2d88b3044bc6cbf5d7b0860db2b.svg?invert_in_darkmode&sanitize=true" align=middle width=9.55577369999999pt height=22.831056599999986pt/> for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> is <img src="/tex/674588ef0a0704240d287f43381221a9.svg?invert_in_darkmode&sanitize=true" align=middle width=75.0436764pt height=22.831056599999986pt/>, where
-<img src="/tex/3cf4fbd05970446973fc3d9fa3fe3c41.svg?invert_in_darkmode&sanitize=true" align=middle width=8.430376349999989pt height=14.15524440000002pt/> is the growing factor and <img src="/tex/3e18a4a28fdee1744e5e3f79d13b9ff6.svg?invert_in_darkmode&sanitize=true" align=middle width=7.11380504999999pt height=14.15524440000002pt/> is the suppressing factor.
+<img src="/tex/3cf4fbd05970446973fc3d9fa3fe3c41.svg?invert_in_darkmode&sanitize=true" align=middle width=8.430376349999989pt height=14.15524440000002pt/> is the growth factor and <img src="/tex/3e18a4a28fdee1744e5e3f79d13b9ff6.svg?invert_in_darkmode&sanitize=true" align=middle width=7.11380504999999pt height=14.15524440000002pt/> is the suppressing factor.
 
-The market value <img src="/tex/f93b76600ef1549fec19f91026179698.svg?invert_in_darkmode&sanitize=true" align=middle width=12.61896569999999pt height=14.15524440000002pt/> for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> is <img src="/tex/191e1fdecb88064067cf81080faa2a1f.svg?invert_in_darkmode&sanitize=true" align=middle width=108.09074265pt height=29.190975000000005pt/>, where <img src="/tex/3cf4fbd05970446973fc3d9fa3fe3c41.svg?invert_in_darkmode&sanitize=true" align=middle width=8.430376349999989pt height=14.15524440000002pt/> is the growing factor, <img src="/tex/9e0f245dc3cfa0eafdd01fc2a09cc282.svg?invert_in_darkmode&sanitize=true" align=middle width=13.259167349999991pt height=22.831056599999986pt/> is the number of blocks in one
-step, and <img src="/tex/091e69068b5b8ca1da78c4d6427002cf.svg?invert_in_darkmode&sanitize=true" align=middle width=18.156910199999988pt height=22.831056599999986pt/> is the number blocks in one day. The market value is adjusted
-to <img src="/tex/2eb51615c6366a28eb5c1ec91d3bc91c.svg?invert_in_darkmode&sanitize=true" align=middle width=32.40983954999999pt height=14.15524440000002pt/>, the minimum market value, if it is less than <img src="/tex/2eb51615c6366a28eb5c1ec91d3bc91c.svg?invert_in_darkmode&sanitize=true" align=middle width=32.40983954999999pt height=14.15524440000002pt/>.
+The market value <img src="/tex/f93b76600ef1549fec19f91026179698.svg?invert_in_darkmode&sanitize=true" align=middle width=12.61896569999999pt height=14.15524440000002pt/> for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> is <img src="/tex/191e1fdecb88064067cf81080faa2a1f.svg?invert_in_darkmode&sanitize=true" align=middle width=108.09074265pt height=29.190975000000005pt/>, where <img src="/tex/3cf4fbd05970446973fc3d9fa3fe3c41.svg?invert_in_darkmode&sanitize=true" align=middle width=8.430376349999989pt height=14.15524440000002pt/> is the growth factor, <img src="/tex/9e0f245dc3cfa0eafdd01fc2a09cc282.svg?invert_in_darkmode&sanitize=true" align=middle width=13.259167349999991pt height=22.831056599999986pt/> is the number of blocks in one
+step, and <img src="/tex/091e69068b5b8ca1da78c4d6427002cf.svg?invert_in_darkmode&sanitize=true" align=middle width=18.156910199999988pt height=22.831056599999986pt/> is the number of blocks in one day. The market value is
+adjusted to <img src="/tex/2eb51615c6366a28eb5c1ec91d3bc91c.svg?invert_in_darkmode&sanitize=true" align=middle width=32.40983954999999pt height=14.15524440000002pt/>, the minimum market value, if it is less than <img src="/tex/77fa3753294ef3ff63ab52cf9a5fc068.svg?invert_in_darkmode&sanitize=true" align=middle width=32.40983954999999pt height=14.15524440000002pt/>.
 
-The number of txs newly generated <img src="/tex/4b3df27b02447b02ec8ccfe5432e6f38.svg?invert_in_darkmode&sanitize=true" align=middle width=10.58699729999999pt height=20.221802699999984pt/> for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> is <img src="/tex/7209992aa3ece9e70949351cad6fd695.svg?invert_in_darkmode&sanitize=true" align=middle width=88.96846529999998pt height=23.388043799999995pt/>, where <img src="/tex/01b0465185bb384080bdb4a21f4697d9.svg?invert_in_darkmode&sanitize=true" align=middle width=11.83700594999999pt height=14.15524440000002pt/> is the tx generation
-force and <img src="/tex/6dec54c48a0438a5fcde6053bdb9d712.svg?invert_in_darkmode&sanitize=true" align=middle width=8.49888434999999pt height=14.15524440000002pt/> is a random variable from the normal distribution. The number
-of newly generated txs is adjusted to the base tx number for each block times
-the number of blocks in one step if it is too small.
+The number of txs newly generated <img src="/tex/4b3df27b02447b02ec8ccfe5432e6f38.svg?invert_in_darkmode&sanitize=true" align=middle width=10.58699729999999pt height=20.221802699999984pt/> for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> is <img src="/tex/386aa8d69abb9a8ad351863e67106907.svg?invert_in_darkmode&sanitize=true" align=middle width=88.96846529999998pt height=23.388043799999995pt/>, where <img src="/tex/01b0465185bb384080bdb4a21f4697d9.svg?invert_in_darkmode&sanitize=true" align=middle width=11.83700594999999pt height=14.15524440000002pt/> is the tx generation
+force and <img src="/tex/6dec54c48a0438a5fcde6053bdb9d712.svg?invert_in_darkmode&sanitize=true" align=middle width=8.49888434999999pt height=14.15524440000002pt/> is a random variable from the standard normal distribution.
+The number of newly generated txs is adjusted to the base tx number for each
+block times the number of blocks in one step if it is too small.
 
 The tx generation force <img src="/tex/0fe1677705e987cac4f589ed600aa6b3.svg?invert_in_darkmode&sanitize=true" align=middle width=9.046852649999991pt height=14.15524440000002pt/> is <img src="/tex/93a321dfcba4d1310995676da8995e8a.svg?invert_in_darkmode&sanitize=true" align=middle width=82.79624264999998pt height=22.831056599999986pt/>, where <img src="/tex/f4da4daa1670931b39e93a753c99e1c2.svg?invert_in_darkmode&sanitize=true" align=middle width=12.76206689999999pt height=20.221802699999984pt/> is tx generation factor, <img src="/tex/f93b76600ef1549fec19f91026179698.svg?invert_in_darkmode&sanitize=true" align=middle width=12.61896569999999pt height=14.15524440000002pt/> is the market value for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/>, <img src="/tex/6182105e328f9f63f1a3794f894df2be.svg?invert_in_darkmode&sanitize=true" align=middle width=13.259167349999991pt height=22.831056599999986pt/> is the number of blocks in one step, and <img src="/tex/3e18a4a28fdee1744e5e3f79d13b9ff6.svg?invert_in_darkmode&sanitize=true" align=middle width=7.11380504999999pt height=14.15524440000002pt/> is the suppressing factor.
 
@@ -111,64 +112,36 @@ The tx generation force <img src="/tex/0fe1677705e987cac4f589ed600aa6b3.svg?inve
 	- want to buy coins (in USD)
 	- want to sell goods (in AMO)
 	- want to buy goods (in AMO)
-	- want to delegate/retract coins
 - decisions
 	- sell coins
 	- buy coins
 	- sell goods
 	- buy goods
-	- delegate/retract coins
 
 ### Validator
-CURRENT
-
-Calculate the following:
-- gain per one AMO from chain: expected income in USD from stakes
-- gain per one AMO from market: expected income in USD by selling coins
-
-If the gain from the chain is higher than the gain from the market, increase
-stakes and decrease active coins. Otherwise, decrease stakes and increase
-active coins.
-
-
-- increase/decrease staked coins based on the number of pending txs, tx fee and
-  tx reward
-- increase/decrease the sum of active coins accordingly
-
-DRAFT
-
-Validator represents the whole set of validators.
-
-#### desires
-- want to increase/decrease stake (in AMO)
+Represents validator activities in the chain and market.
+- update interest rate of the chain
+- update stakes
 
 #### conditions
-- tx fee
-- tx generation rate
+- recent tx fee
+- number of processed txs in the last step
 
-#### decisions
-- increase/decrease stake
+The recent tx fee is dealt with as in [user actor](#user) section.
 
-#### effect
-- increase/decrease stake
+#### state change
+The interest rate of the chain <img src="/tex/577d71a741297d3fefc204ac02b29d49.svg?invert_in_darkmode&sanitize=true" align=middle width=10.314125249999991pt height=21.68300969999999pt/> for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> is <img src="/tex/9542cd7712af636a4a979404ae260e24.svg?invert_in_darkmode&sanitize=true" align=middle width=159.27788414999998pt height=24.65753399999998pt/>, where <img src="/tex/4b3df27b02447b02ec8ccfe5432e6f38.svg?invert_in_darkmode&sanitize=true" align=middle width=10.58699729999999pt height=20.221802699999984pt/> is the number of processed txs for the
+step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/>, <img src="/tex/fbbe4f914e422f09fec173b1874cd98c.svg?invert_in_darkmode&sanitize=true" align=middle width=28.99259879999999pt height=22.831056599999986pt/> is as in [user actor](#user) section, <img src="/tex/31fae8b8b78ebe01cbfbe2fe53832624.svg?invert_in_darkmode&sanitize=true" align=middle width=12.210846449999991pt height=14.15524440000002pt/> is the reward
+for each txs, <img src="/tex/b102ea7af0287ccf0249911fa1533a34.svg?invert_in_darkmode&sanitize=true" align=middle width=17.613104849999992pt height=22.831056599999986pt/> is the number of blocks in one year, and <img src="/tex/9e0f245dc3cfa0eafdd01fc2a09cc282.svg?invert_in_darkmode&sanitize=true" align=middle width=13.259167349999991pt height=22.831056599999986pt/> is the
+number of blocks in one step.
 
-## Non-player actors
-Non-players don't have their own desires, so no random variable is used when
-calculating their actions. Each non-player just calculate its output from the
-input based on the pre-determined rules. Non-players represents activities from
-AMO blockchain protocol execution or some environmental change.
+The total amount of stakes <img src="/tex/0edbe35c37603976231156391f9e2492.svg?invert_in_darkmode&sanitize=true" align=middle width=12.35637809999999pt height=14.15524440000002pt/> for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> is <img src="/tex/97d4427bb12f653aeb5df3466bdf7cad.svg?invert_in_darkmode&sanitize=true" align=middle width=144.59607689999999pt height=23.388043799999995pt/>, where <img src="/tex/f9c324e7e50e0f16f2de35c791986a03.svg?invert_in_darkmode&sanitize=true" align=middle width=14.04400634999999pt height=14.15524440000002pt/> is the stake
+increase force and <img src="/tex/6dec54c48a0438a5fcde6053bdb9d712.svg?invert_in_darkmode&sanitize=true" align=middle width=8.49888434999999pt height=14.15524440000002pt/> is a random variable from the standard normal
+distribution. The total amount of stakes is adjusted according to the total
+amount of coins.
 
-### Teller
-- decrease the number of pending txs based on block size
-- calculate block and tx reward and increase active coins accordingly
+The stake increase force <img src="/tex/8cda31ed38c6d59d14ebefa440099572.svg?invert_in_darkmode&sanitize=true" align=middle width=9.98290094999999pt height=14.15524440000002pt/> is \$sigma _ i = \frac{i _ i s _ {i - 1}}{i _
+w} - s _ {i - 1}<img src="/tex/68e6b9bbfa397ea50739b1c5e352feda.svg?invert_in_darkmode&sanitize=true" align=middle width=52.169074649999985pt height=22.831056599999986pt/>i _ w<img src="/tex/79d6f772471a0dd84f15ab931e58b258.svg?invert_in_darkmode&sanitize=true" align=middle width=700.27475595pt height=677.077632pt/>n<img src="/tex/8ae9a6bfadae63ae74c4656485935fe3.svg?invert_in_darkmode&sanitize=true" align=middle width=111.12818639999999pt height=24.65753399999998pt/>t _ {avg}= \frac{\sum _ {i=1}^{n}{t _ i}}{n}<img src="/tex/68e6b9bbfa397ea50739b1c5e352feda.svg?invert_in_darkmode&sanitize=true" align=middle width=52.169074649999985pt height=22.831056599999986pt/>t _ i<img src="/tex/86f734f42273f64464f2696c12769a3d.svg?invert_in_darkmode&sanitize=true" align=middle width=270.13827885pt height=22.831056599999986pt/>i$.
 
-### Depleter
-- convert small amount of active coins to lost coins (asset loss due to lost
-  account keys)
-- decrease small number of pending txs (tx loss due to network problem or block
-  limit)
-
-### Invisible hand
-- update market liveness based on the current tx fee and market growth factor
-- calculate tx fee based on the number of pending txs<br/>
-  *NOTE: Tx fee is zero when there is no pending txs.*
+#### state change
+TODO
