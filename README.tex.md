@@ -147,7 +147,7 @@ increase force and $\rho$ is a random variable from the standard normal
 distribution. The total amount of stakes is adjusted according to the total
 amount of coins.
 
-The stake increase force $\sigma$ is \$sigma _ i = \frac{i _ i s _ {i - 1}}{i _
+The stake increase force $\sigma$ is $sigma _ i = \frac{i _ i s _ {i - 1}}{i _
 w} - s _ {i - 1}$, where $i _ w$ is the interest rate of the outer world.
 
 #### TODO
