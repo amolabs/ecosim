@@ -4,6 +4,7 @@
 ### Simulation config
 - simulation step size (in blocks or seconds)
 - simulation steps
+- smoothing factor
 
 ### Fixed domain parameters
 The domain parameters are static and read-only. They are fixed unless there is
@@ -13,13 +14,22 @@ chain parameters:
 - initial amount of active coins
 - block and tx reward
 - max number of txs in a block
+- scale factor for tx fee dynamics
+- maximum stake change
+- maximum stake ratio
 
 market parameters:
 - initial market liveness
 - initial market value
 - initial coin exchange rate
+- initial interest rate of the outer world
 - tx generate factor: controls the number of newly generated txs
+- base number of txs for each block
 - market growth factor: controls dynamics of market liveness
+
+depletion parameters:
+- depletion rate for active coins
+- depletion rate for pending txs
 
 ## Simulation Steps
 The simulation runs a model in steps. A model is a state machine and keeps its
@@ -35,26 +45,27 @@ Simulation statistics:
 ### Blockchain state
 Simulation statistics for tx processing:
 - total number of blocks generated (this measures time elapsed)
-- total number of txs generated
-- total number of txs processed and included in blocks
-- total number of txs lost due to computing environment
+- number of newly generated txs in the last step
+- number of processed txs in the last step
+- number of lost txs in the last step
 
 Tx status:
 - current number of txs pending in blockchain nodes
 - current tx fee
 
-Asset status:
+Chain asset status:
 - sum of all coins = sum of all active, lost and locked coins(stakes)
 - sum of all active coins
 - sum of all lost coins due to lost account keys and etc.
-- sum of all stakes including delegated stakes
-
+- sum of all stakes and delegated stakes
 
 ### Market state
 - market liveness: controls the number of newly generated txs
-- <s>market value: total value of all goods ready to be sold in the market (in
-  USD)</s>
+- market value: total value of all goods ready to be traded in the market (in
+  USD)
 - coin exchange rate (in USD for one AMO)
+- interest rate of the chain
+- interest rate of the outer world
 
 *NOTE: This is the only place where we use the unit USD.*
 
@@ -65,34 +76,31 @@ their decisions. Each *player* represents all entities of the same type, and
 appears as a single function in the simulation.
 
 ### User
-CURRENT
-
-- increase the number of generated txs based on the current market liveness
-
-DRAFT
-
-User represents the whole set of users.
-
-#### desires
-- <s>want to sell coins (in USD)</s>
-- <s>want to buy coins (in USD)</s>
-- want to sell goods (in AMO)
-- want to buy goods (in AMO)
-- want to delegate/retract coins
+Represents user activities in the chain and market.
+- update market liveness
+- update market value
+- generates txs
 
 #### conditions
-- tx fee
+- recent tx fee
 
-#### decisions
-- <s>sell coins</s>
-- <s>buy coins</s>
-- sell goods
-- buy goods
-- delegate/retract coins
+$f_{avg}= \frac{\sum_{i=1}^{n}{f_i}}{n}$,
 
-#### effect
-- increase/decrease tx generation rate (txs per second)
-- increase/decrease delegated stakes
+where $f_{avg}$ is the average fee during the recent $n$ blocks.
+
+#### TODO
+- desires
+	- <s>want to sell coins (in USD)</s>
+	- <s>want to buy coins (in USD)</s>
+	- want to sell goods (in AMO)
+	- want to buy goods (in AMO)
+	- want to delegate/retract coins
+- decisions
+	- <s>sell coins</s>
+	- <s>buy coins</s>
+	- sell goods
+	- buy goods
+	- delegate/retract coins
 
 ### Validator
 CURRENT
