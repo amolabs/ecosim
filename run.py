@@ -8,9 +8,10 @@ import nplayers
 import matplotlib.pyplot as plt
 
 config = {
-        'stepblks': 60*60, # in blocks
+        'stepblks': 60*60*24, # in blocks
         #'steps': 24*365,
-        'steps': 24*50,
+        #'steps': 24*150,
+        'steps': 2000,
         'smooth': 50000,
         }
 param = {
@@ -19,15 +20,17 @@ param = {
         'initial_stakes': 1000000*oneamo,
         'txreward': 0.1*oneamo,
         'blktxsize': 1000,
-        'feescale': 1.0,
+        'feescale': 0.1,
         'max_stakechange': 10000*oneamo,
+        'max_stakeratio': 0.9,
         # market parameters
         'initial_liveness': 0,
-        'initial_value': 0,
+        'initial_value': 10., # in USD
         'initial_exchrate': 0.0005, # USD for one AMO
-        'txgenbase': 1, # per block
-        'growth_factor': 1.001,
         'initial_interest_world': 0.02,
+        'txpervalue': 1, # one tx per one USD
+        'txgenbase': 0.1, # one tx per block
+        'growth_factor': 1.01,
         # depeletion rates
         'deplete_coin': 0.000001,
         'deplete_tx': 0.000001,
@@ -60,12 +63,15 @@ state = {
 
 def display_state(state):
     chain = state['chain']
+    market = state['market']
     days = chain['blks']/60/60/24
     print(f'run steps: {state["steps"]}, {chain["blks"]} blocks = {days:.2f} days')
     # chain stat
     print(f'tx: {chain["stat_txgen"]:-12,d}(+) {chain["stat_txproc"]:-12,d}(-)  {chain["stat_txlost"]:-7,d} lost  {chain["txpending"]:-6,d} pending')
     coinsamo = chain['txfee']/oneamo
     print(f'  tx fee:               {coinsamo:-20,.3f} AMO / tx')
+    usd = coinsamo * market['exchange_rate']
+    print(f'                        {usd:-20,.3f} USD / tx')
     # assets
     coinsamo = chain['coins']/oneamo
     print(f'  coins:  total         {coinsamo:-20,.3f} AMO')
@@ -80,7 +86,6 @@ def display_state(state):
     print(f'          stakes        {coinsamo:-20,.3f} AMO ({ratio:.3f}%)')
     #print(f'          stakes(mote)  {chain["stakes"]:-20,} mote')
     # market
-    market = state['market']
     print(f'  market: value         {market["value"]:-20,.3f} USD')
     print(f'          exchange      {market["exchange_rate"]:-21,.4f} USD/AMO')
     print(f'          liveness      {market["liveness"]:-21,.4f}')
@@ -96,13 +101,14 @@ def step(state):
     nplayers.teller(state['chain'])
     nplayers.depleter(state['chain'])
     nplayers.invisible(state)
+    nplayers.historian(state)
 
 def run(state):
     steps = []
     y_txgen = []
     y_txpen = []
     y_coins = []
-    y_txfee = []
+    y_txfee_usd = []
     y_interest = []
     y_liveness = []
     y_exchange = []
@@ -115,7 +121,8 @@ def run(state):
         y_txgen.append(state['chain']['stat_txgen'])
         y_txpen.append(state['chain']['txpending'])
         y_coins.append(state['chain']['coins']/oneamo)
-        y_txfee.append(state['chain']['txfee']/oneamo)
+        y_txfee_usd.append(state['chain']['txfee']/oneamo \
+                * state['market']['exchange_rate'])
         y_interest.append(state['market']['interest_chain'])
         y_liveness.append(state['market']['liveness'])
         y_exchange.append(state['market']['exchange_rate'])
@@ -126,7 +133,7 @@ def run(state):
     plt.plot(steps, y_txgen, '--k')
     plt.plot(steps, y_txpen, '--g')
     #plt.plot(steps, y_coins)
-    plt.plot(steps, y_txfee, '--r')
+    plt.plot(steps, y_txfee_usd, '--r')
     plt.plot(steps, y_interest, '-y', 'interest')
     plt.plot(steps, y_liveness, '-m')
     plt.plot(steps, y_exchange, '-g')
@@ -145,6 +152,7 @@ players.config = config
 nplayers.config = config
 players.param = param
 nplayers.param = param
+nplayers.hist_size = int(BLKSMONTH / config['stepblks'])
 
 print( '==================================================================')
 #for i in range(5):

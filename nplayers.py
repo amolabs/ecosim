@@ -1,10 +1,8 @@
 # vim: set sw=4 ts=4 expandtab :
 
 from const import *
-import math
 
 def teller(chain):
-    global tx_to_process ### used in invisible
     tx_to_process = min(
             chain['txpending'],
             param['blktxsize'] * config['stepblks']
@@ -26,55 +24,23 @@ def depleter(chain):
     chain['stat_txlost'] += txlost
     chain['txpending'] -= txlost
 
-# invisible hand
+# invisible hand to intermediate supply and demand
 def invisible(state):
     chain = state['chain']
     market = state['market']
 
-    global debug1, debug2
-
-    # update market value
-    tmp = market['value']
-    tmp += market['liveness'] * config['stepblks']
-    #tmp *= math.log10(market['liveness'] + 1) + 1
-    #tmp *= param['growth_factor']
-    # XXX: minimum liveness
-    tmp = max(tmp, 0.001)
-    market['value'] = tmp
-
     # update tx fee
     # estimate remaining blocks until all of the currently pending txs would be
     # processed
-    # one param['feescale'] USD for one day
-    blks = chain['txpending'] / param['blktxsize']
-    fee_usd = param['feescale'] * blks / (60*60*24) # in USD
+    # one param['feescale'] USD for one hour
+    avg_pending = sum(hist['txpending']) / len(hist['txpending'])
+    blks = avg_pending / param['blktxsize']
+    fee_usd = param['feescale'] * blks / BLKSHOUR # in USD
     fee = int(fee_usd / market['exchange_rate'] * oneamo) # in mote
     # update
-    smooth = config['smooth'] / config['stepblks']
-    chain['txfee'] = int((fee + (smooth-1)*chain['txfee']) / smooth)
-
-    # update liveness
-    tmp = market['liveness']
-    # increase by growth factor
-    f = math.pow(param['growth_factor'], config['stepblks'])
-    ## suppress by tx fee
-    fee_usd = chain['txfee'] / oneamo * market['exchange_rate']
-    f *= param['feescale'] / (fee_usd * config['stepblks'] + param['feescale'])
-    #fee_factor = math.log10(fee_factor) + 1
-    tmp *= f
-    # TODO: minimum liveness
-    tmp = max(tmp, 0.001)
-    smooth = config['smooth'] / config['stepblks']
-    market['liveness'] = (tmp + (smooth-1)*market['liveness']) / smooth
-
-    # projected yearly interest of the chain
-    # (augment with very small bias to chain)
-    gain_chain_year = tx_to_process \
-            * (chain['txfee'] + param['txreward']) \
-            * BLKSYEAR / config['stepblks']
-    interest = gain_chain_year / (chain['stakes'] + DELTA_MOTE)
-    market['interest_chain'] = min(interest, 100)
-    #market['interest_chain'] = interest
+    chain['txfee'] = fee
+    #smooth = config['smooth'] / config['stepblks']
+    #chain['txfee'] = int((fee + (smooth-1)*chain['txfee']) / smooth)
 
     # update exchange rate
     exch = market['value'] \
@@ -83,4 +49,13 @@ def invisible(state):
     # update
     smooth = config['smooth'] / config['stepblks']
     market['exchange_rate'] = (exch + (smooth-1)*market['exchange_rate']) / smooth
-    #market['exchange_rate'] = exch
+
+hist_size = 0
+hist = {'txpending': [0], 'txfee': [0]}
+def historian(state):
+    hist['txpending'].append(state['chain']['txpending'])
+    hist['txfee'].append(state['chain']['txfee'])
+    l = len(hist['txpending'])
+    if l > hist_size:
+        hist['txpending'] = hist['txpending'][l-hist_size:]
+        hist['txfee'] = hist['txfee'][l-hist_size:]

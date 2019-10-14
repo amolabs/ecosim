@@ -79,31 +79,33 @@ appears as a single function in the simulation.
 Represents user activities in the chain and market.
 - update market liveness
 - update market value
-- generates txs
+- generates txs (increase the number of pending txs)
 
 #### conditions
 - recent tx fee
 
 The recent tx fee is the average fee during the recent $n$ blocks:<br/>
-$f _ {avg}= \frac{\sum _ {i=1}^{n}{f _ i}}{n}$.
+$f _ {avg}= \frac{\sum _ {i=1}^{n}{f _ i}}{n}$, where $f _ i$ is the tx fee for
+the step $i$.
 
 The suppressing factor $c$ by the tx fee is:<br/>
 $c = \frac{f _ {scale}}{f _ {avg} + f _ {scale}}$.
 
 #### state change
 The market liveness $l _ i$ for the step $i$ is $l _ i = l _ {i-1}gc$, where
-$g$ is the growing factor and $c$ is the suppressing factor.
+$g$ is the growth factor and $c$ is the suppressing factor.
 
 The market value $v _ i$ for the step $i$ is $v _ i = v _ {i-1} g^{b _ s / b _
-D}$, where $g$ is the growing factor, $b _ s$ is the number of blocks in one
-step, and $b _ D$ is the number blocks in one day. The market value is adjusted
-to $v _ {min}$, the minimum market value, if it is less than $v _ {min}$.
+D}$, where $g$ is the growth factor, $b _ s$ is the number of blocks in one
+step, and $b _ D$ is the number of blocks in one day. The market value is
+adjusted to $v _ {min}$, the minimum market value, if it is less than $v _
+{min}$.
 
 The number of txs newly generated $t _ i$ for the step $i$ is $t _ i =
-\frac{\tau _ i}{4} \rho + \tau _ i$, where $\tau _ i$ is the tx generation
-force and $\rho$ is a random variable from the normal distribution. The number
-of newly generated txs is adjusted to the base tx number for each block times
-the number of blocks in one step if it is too small.
+\frac{\tau _ i}{2} \rho + \tau _ i$, where $\tau _ i$ is the tx generation
+force and $\rho$ is a random variable from the standard normal distribution.
+The number of newly generated txs is adjusted to the base tx number for each
+block times the number of blocks in one step if it is too small.
 
 The tx generation force $\tau$ is $\tau _ i = t _ g v _ i b _ s c$, where $t _
 g$ is tx generation factor, $v _ i$ is the market value for the step $i$, $b _
@@ -115,46 +117,43 @@ s$ is the number of blocks in one step, and $c$ is the suppressing factor.
 	- want to buy coins (in USD)
 	- want to sell goods (in AMO)
 	- want to buy goods (in AMO)
-	- want to delegate/retract coins
 - decisions
 	- sell coins
 	- buy coins
 	- sell goods
 	- buy goods
-	- delegate/retract coins
 
 ### Validator
-CURRENT
-
-Calculate the following:
-- gain per one AMO from chain: expected income in USD from stakes
-- gain per one AMO from market: expected income in USD by selling coins
-
-If the gain from the chain is higher than the gain from the market, increase
-stakes and decrease active coins. Otherwise, decrease stakes and increase
-active coins.
-
-
-- increase/decrease staked coins based on the number of pending txs, tx fee and
-  tx reward
-- increase/decrease the sum of active coins accordingly
-
-DRAFT
-
-Validator represents the whole set of validators.
-
-#### desires
-- want to increase/decrease stake (in AMO)
+Represents validator activities in the chain and market.
+- update interest rate of the chain
+- update stakes
 
 #### conditions
-- tx fee
-- tx generation rate
+- recent tx fee
+- number of processed txs in the last step
 
-#### decisions
-- increase/decrease stake
+The recent tx fee is dealt with as in [user actor](#user) section.
 
-#### effect
-- increase/decrease stake
+#### state change
+The interest rate of the chain $i _ i$ for the step $i$ is $i _ i = t _ i (f _
+{avg} + w) b _ Y / b _ s$, where $t _ i$ is the number of processed txs for the
+step $i$, $f _ {avg}$ is as in [user actor](#user) section, $w$ is the reward
+for each txs, $b _ Y$ is the number of blocks in one year, and $b _ s$ is the
+number of blocks in one step.
+
+The total amount of stakes $s _ i$ for the step $i$ is $s _ i = \frac{\sigma _
+i}{2} \rho + \sigma _ i + s _ {i - 1}$, where $\sigma _ i$ is the stake
+increase force and $\rho$ is a random variable from the standard normal
+distribution. The total amount of stakes is adjusted according to the total
+amount of coins.
+
+The stake increase force $\sigma$ is \$sigma _ i = \frac{i _ i s _ {i - 1}}{i _
+w} - s _ {i - 1}$, where $i _ w$ is the interest rate of the outer world.
+
+#### TODO
+- desires
+	- want to sell coins (in USD)
+	- want to buy coins (in USD)
 
 ## Non-player actors
 Non-players don't have their own desires, so no random variable is used when
@@ -163,8 +162,13 @@ input based on the pre-determined rules. Non-players represents activities from
 AMO blockchain protocol execution or some environmental change.
 
 ### Teller
-- decrease the number of pending txs based on block size
+Represents block generation process of the AMO blockchain protocol.
+- process txs (decrease the number of pending txs)
 - calculate block and tx reward and increase active coins accordingly
+
+#### state change
+The number of processed txs is the mininum of the number of pending txs and
+maximum tx capacity of one simulation step.
 
 ### Depleter
 - convert small amount of active coins to lost coins (asset loss due to lost
@@ -173,6 +177,18 @@ AMO blockchain protocol execution or some environmental change.
   limit)
 
 ### Invisible hand
-- update market liveness based on the current tx fee and market growth factor
-- calculate tx fee based on the number of pending txs<br/>
-  *NOTE: Tx fee is zero when there is no pending txs.*
+Represents the supply-demand effect of the chain and amrket.
+- update tx fee
+- update coin exchange rate
+
+#### conditions
+- the number of pending txs
+- market value
+- the amount of stakes and the amount of active coins
+
+The average number of pending txs during the recent $n$ blocks:<br/>
+$t _ {avg}= \frac{\sum _ {i=1}^{n}{t _ i}}{n}$, where $t _ i$ is the number of
+pending txs for the step $i$.
+
+#### state change
+TODO
