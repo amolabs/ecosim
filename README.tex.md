@@ -23,7 +23,7 @@ market parameters:
 - initial market value
 - initial coin exchange rate
 - initial interest rate of the outer world
-- tx generate factor: controls the number of newly generated txs
+- tx generation factor: controls the number of newly generated txs
 - base number of txs for each block
 - market growth factor: controls dynamics of market liveness
 
@@ -84,20 +84,41 @@ Represents user activities in the chain and market.
 #### conditions
 - recent tx fee
 
-$f_{avg}= \frac{\sum_{i=1}^{n}{f_i}}{n}$,
+The recent tx fee is the average fee during the recent $n$ blocks:<br/>
+$f _ {avg}= \frac{\sum _ {i=1}^{n}{f _ i}}{n}$.
 
-where $f_{avg}$ is the average fee during the recent $n$ blocks.
+The suppressing factor $c$ by the tx fee is:<br/>
+$c = \frac{f _ {scale}}{f _ {avg} + f _ {scale}}$.
+
+#### state change
+The market liveness $l _ i$ for the step $i$ is $l _ i = l _ {i-1}gc$, where
+$g$ is the growing factor and $c$ is the suppressing factor.
+
+The market value $v _ i$ for the step $i$ is $v _ i = v _ {i-1} g^{b _ s / b _
+D}$, where $g$ is the growing factor, $b _ s$ is the number of blocks in one
+step, and $b _ D$ is the number blocks in one day. The market value is adjusted
+to $v _ {min}$, the minimum market value, if it is less than $v _ {min}$.
+
+The number of txs newly generated $t _ i$ for the step $i$ is $t _ i =
+\frac{\tau _ i}{4} \rho + \tau _ i$, where $\tau _ i$ is the tx generation
+force and $\rho$ is a random variable from the normal distribution. The number
+of newly generated txs is adjusted to the base tx number for each block times
+the number of blocks in one step if it is too small.
+
+The tx generation force $\tau$ is $\tau _ i = t _ g v _ i b _ s c$, where $t _
+g$ is tx generation factor, $v _ i$ is the market value for the step $i$, $b _
+s$ is the number of blocks in one step, and $c$ is the suppressing factor.
 
 #### TODO
 - desires
-	- <s>want to sell coins (in USD)</s>
-	- <s>want to buy coins (in USD)</s>
+	- want to sell coins (in USD)
+	- want to buy coins (in USD)
 	- want to sell goods (in AMO)
 	- want to buy goods (in AMO)
 	- want to delegate/retract coins
 - decisions
-	- <s>sell coins</s>
-	- <s>buy coins</s>
+	- sell coins
+	- buy coins
 	- sell goods
 	- buy goods
 	- delegate/retract coins
