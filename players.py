@@ -70,14 +70,14 @@ def validators(state):
 
     # projected yearly interest of the chain
     # (augment with very small bias to chain)
-    gain_chain_year = chain['stat_txproc'] \
+    gain_stake_year = chain['stat_txproc'] \
             * (avg_txfee + param['txreward']) \
             * BLKSYEAR / config['stepblks']
-    interest = gain_chain_year / (chain['stakes'] + DELTA_MOTE)
-    #market['interest_chain'] = min(interest, 100)
-    market['interest_chain'] = interest
+    interest = gain_stake_year / (chain['stakes'] + DELTA_MOTE)
+    #market['interest_stake'] = min(interest, 100)
+    market['interest_stake'] = interest
 
-    ic = market['interest_chain']
+    ic = market['interest_stake']
     iw = market['interest_world']
     sc = chain['stakes']
     upforce = (ic * (sc + DELTA_MOTE) / iw) - sc

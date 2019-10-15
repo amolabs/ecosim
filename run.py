@@ -56,7 +56,7 @@ state = {
             'liveness': param['initial_liveness'],
             'value': param['initial_value'],
             'exchange_rate': param['initial_exchrate'], # in AMO, not mote
-            'interest_chain': 0,
+            'interest_stake': 0,
             'interest_world': param['initial_interest_world'],
             }
         }
@@ -89,7 +89,7 @@ def display_state(state):
     print(f'  market: value         {market["value"]:-20,.3f} USD')
     print(f'          exchange      {market["exchange_rate"]:-21,.4f} USD/AMO')
     print(f'          liveness      {market["liveness"]:-21,.4f}')
-    print(f'          interest      {market["interest_chain"]:-21,.4f}')
+    print(f'          interest      {market["interest_stake"]:-21,.4f}')
     #print(f'  debug1 = {players.debug1:,}')
     #print(f'  debug1 = {nplayers.debug1:,}')
 
@@ -123,7 +123,7 @@ def run(state):
         y_coins.append(state['chain']['coins']/oneamo)
         y_txfee_usd.append(state['chain']['txfee']/oneamo \
                 * state['market']['exchange_rate'])
-        y_interest.append(state['market']['interest_chain'])
+        y_interest.append(state['market']['interest_stake'])
         y_liveness.append(state['market']['liveness'])
         y_exchange.append(state['market']['exchange_rate'])
         y_value.append(state['market']['value'])

@@ -64,7 +64,7 @@ Chain asset status:
 - market value: total value of all goods ready to be traded in the market (in
   USD)
 - coin exchange rate (in USD for one AMO)
-- interest rate of the chain
+- interest rate of the stake
 - interest rate of the outer world
 
 *NOTE: This is the only place where we use the unit USD.*
