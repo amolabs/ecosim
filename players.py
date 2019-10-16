@@ -70,10 +70,15 @@ def validators(state):
 
     # projected yearly interest of the chain
     # (augment with very small bias to chain)
-    gain_stake_year = chain['stat_txproc'] \
+    # yearly coin gain for validator nodes
+    gain_usd_year = chain['stat_txproc'] \
             * (avg_txfee + param['txreward']) \
             * BLKSYEAR / config['stepblks']
-    interest = gain_stake_year / (chain['stakes'] + DELTA_MOTE)
+    # yearly running cost for validator nodes
+    cost_usd_year = 1000 * chain['stakes'] / 10000
+    interest = (gain_usd_year - cost_usd_year) \
+            / (chain['stakes'] + DELTA_MOTE)
+    interest = max(interest, 0)
     #market['interest_stake'] = min(interest, 100)
     market['interest_stake'] = interest
 
