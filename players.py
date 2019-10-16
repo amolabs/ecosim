@@ -35,20 +35,32 @@ def users(state):
 
     # update market value
     tmp = market['value']
-    tmp *= math.pow(param['growth_factor'], config['stepblks'] / BLKSDAY)
+    ## method 1
+    #tmp *= math.pow(param['growth_factor'], config['stepblks'] / BLKSDAY)
+    #tmp = max(tmp, 0.001)
+    #market['value'] = tmp
+    ## method 2
+    #tmp *= math.pow(0.3, chain['blks'] / BLKSMONTH)
+    #market['value'] += tmp
+    ## method 3
+    x = chain['blks'] / BLKSMONTH
+    market['value'] = \
+            param['f_gdp_month'][3] * x**3 \
+            + param['f_gdp_month'][2] * x**2 \
+            + param['f_gdp_month'][1] * x \
+            + param['f_gdp_month'][0]
+    ## others
     #tmp *= math.log10(market['liveness'] + 1) + 1
     #tmp *= param['growth_factor']
     #tmp *= param['growth_factor'] / (fee_usd + param['feescale'])
     #tmp *= math.pow(param['growth_factor'], config['stepblks'] / BLKSMONTH)
-    # XXX: minimum liveness
-    tmp = max(tmp, 0.001)
-    market['value'] = tmp
 
-    # generate txs depending on market state
+    # generate txs depending on market value
     txforce = param['txpervalue'] * market['value'] * config['stepblks']
     # adjust by tx fee
     fee_usd = avg_txfee / oneamo * market['exchange_rate']
     txforce *= param['feescale'] / (fee_usd**2 + param['feescale'])
+    #txforce /= math.pow(1.1, fee_usd / param['feescale'])
     # mimic human unpredictability using random variable
     rv = stats.norm()
     newtxs = txforce / 2 * rv.rvs() + txforce
@@ -97,9 +109,7 @@ def validators(state):
     upstake = int(upstake)
 
     # limit by asset status
-    upstake = min(upstake,
-            chain['coins_active'],
-            chain['coins'] * param['max_stakeratio'] - chain['stakes'])
+    upstake = min(upstake, chain['coins_active'])
     upstake = max(upstake, -chain['stakes'])
     chain['stakes'] += upstake
     chain['coins_active'] -= upstake

@@ -22,18 +22,17 @@ param = {
         'blktxsize': 1000,
         'feescale': 0.1,
         'max_stakechange': 10000*oneamo,
-        'max_stakeratio': 0.9,
         # market parameters
         'initial_liveness': 0,
-        'initial_value': 10., # in USD
+        'f_gdp_month': [10000., 500, 5000, 10],
         'initial_exchrate': 0.0005, # USD for one AMO
         'initial_interest_world': 0.02,
-        'txpervalue': 1, # one tx per one USD
+        'txpervalue': 0.1, # one tx per one USD
         'txgenbase': 0.1, # one tx per block
         'growth_factor': 1.01,
         # depeletion rates
-        'deplete_coin': 0.000001,
-        'deplete_tx': 0.000001,
+        'deplete_coin': 0.0001,
+        'deplete_tx': 0.001,
         }
 state = {
         'steps': 0,
@@ -54,7 +53,7 @@ state = {
             },
         'market': {
             'liveness': param['initial_liveness'],
-            'value': param['initial_value'],
+            'value': param['f_gdp_month'][0],
             'exchange_rate': param['initial_exchrate'], # in AMO, not mote
             'interest_stake': 0,
             'interest_world': param['initial_interest_world'],
