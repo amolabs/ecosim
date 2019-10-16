@@ -47,7 +47,7 @@ def invisible(state):
             / (chain['coins_active'] + chain['stakes'] * 0.0001) \
             * oneamo
     # update
-    smooth = config['smooth'] / config['stepblks']
+    smooth = max(int(config['smooth'] / config['stepblks']), 2)
     market['exchange_rate'] = (exch + (smooth-1)*market['exchange_rate']) / smooth
 
 hist_size = 0
