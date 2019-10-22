@@ -34,16 +34,16 @@ def users(state):
     #market['liveness'] = (tmp + (smooth-1)*market['liveness']) / smooth
 
     # generate txs depending on market value
-    txforce = param['txpervalue'] * market['value'] * config['stepblks']
+    txforce = param['txpervalue'] * market['value'] \
+            * config['stepblks'] / BLKSMONTH
     # adjust by tx fee
     fee_usd = avg_txfee / oneamo * market['exchange_rate']
     txforce *= param['feescale'] / (fee_usd**2 + param['feescale'])
-    #txforce /= math.pow(1.1, fee_usd / param['feescale'])
+
     # mimic human unpredictability using random variable
-    rv = stats.norm()
-    newtxs = txforce / 2 * rv.rvs() + txforce
-    # range check
-    newtxs = max(newtxs, param['txgenbase'] * config['stepblks'])
+    df = 32
+    rv = stats.chi2(df)
+    newtxs = txforce / df * rv.rvs()
     newtxs = int(newtxs)
 
     chain['stat_txgen'] = newtxs
@@ -56,38 +56,41 @@ def validators(state):
     market = state['market']
     hist = nplayers.hist
 
+    avg_txproc = sum(hist['txproc']) / len(hist['txproc'])
     avg_txfee = sum(hist['txfee']) / len(hist['txfee'])
 
     # projected yearly interest of the chain
     # (augment with very small bias to chain)
     # yearly coin gain for validator nodes
-    gain_usd_year = chain['stat_txproc'] \
-            * (avg_txfee + param['txreward']) \
+    gain_year = avg_txproc * (avg_txfee + param['txreward']) \
             * BLKSYEAR / config['stepblks']
     # yearly running cost for validator nodes
-    cost_usd_year = 1000 * chain['stakes'] / 10000
-    interest = (gain_usd_year - cost_usd_year) \
-            / (chain['stakes'] + DELTA_MOTE)
-    interest = max(interest, 0)
-    #market['interest_stake'] = min(interest, 100)
-    market['interest_stake'] = interest
+    cost_year = 1000 * math.log10(chain['stakes'] / 10000 + 1)
+    net_gain_year = gain_year - cost_year
 
-    ic = market['interest_stake']
+    #ic = market['interest_stake']
+    #ic = avg_interest
     iw = market['interest_world']
     sc = chain['stakes']
-    upforce = (ic * (sc + DELTA_MOTE) / iw) - sc
+    upforce = net_gain_year / iw - sc
 
-    # limit by max stake change
-    upforce = min(upforce, param['max_stakechange']*config['stepblks'])
-    upforce = max(upforce, -param['max_stakechange']*config['stepblks'])
+    # opportunity cost by keeping stakes
+    oppcost = chain['stakes'] / 2
+    downforce = oppcost
 
     # mimic human unpredictability using random variable
-    rv = stats.norm()
-    upstake = upforce / 2 * rv.rvs() + upforce
+    df = 32
+    rv = stats.chi2(df)
+    upstake = (upforce - downforce) / df * rv.rvs()
     upstake = int(upstake)
+
+    # update interest rate
+    interest = net_gain_year / (chain['stakes'] + DELTA_MOTE)
+    interest = max(interest, 0)
+    market['interest_stake'] = interest
 
     # limit by asset status
     upstake = min(upstake, chain['coins_active'])
-    upstake = max(upstake, -chain['stakes'])
+    upstake = max(upstake, -(chain['stakes'] - param['fixed_stakes']))
     chain['stakes'] += upstake
     chain['coins_active'] -= upstake
