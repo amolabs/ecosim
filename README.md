@@ -136,7 +136,7 @@ The recent tx fee is dealt with as in [user actor](#user) section.
 
 #### state change
 The yearly gain <img src="/tex/7be0f1e15e3fbce9837f235de523b280.svg?invert_in_darkmode&sanitize=true" align=middle width=18.39889094999999pt height=14.15524440000002pt/> from the stakes is
-<p align="center"><img src="/tex/71b2d3caa030d6988c5d56b24e48a378.svg?invert_in_darkmode&sanitize=true" align=middle width=189.04448804999998pt height=17.031940199999998pt/></p>
+<p align="center"><img src="/tex/389a5e2526f05560a807dab6a38bea93.svg?invert_in_darkmode&sanitize=true" align=middle width=170.6893749pt height=36.2778141pt/></p>
 
 where <img src="/tex/4810117a188cc4fd0ea9b08a78637084.svg?invert_in_darkmode&sanitize=true" align=middle width=26.88070934999999pt height=20.221802699999984pt/> is average number of processed txs in recent blocks, <img src="/tex/31fae8b8b78ebe01cbfbe2fe53832624.svg?invert_in_darkmode&sanitize=true" align=middle width=12.210846449999991pt height=14.15524440000002pt/> is
 the reawrd for each tx, <img src="/tex/b102ea7af0287ccf0249911fa1533a34.svg?invert_in_darkmode&sanitize=true" align=middle width=17.613104849999992pt height=22.831056599999986pt/> is the number of blocks in one year, and <img src="/tex/6182105e328f9f63f1a3794f894df2be.svg?invert_in_darkmode&sanitize=true" align=middle width=13.259167349999991pt height=22.831056599999986pt/> is the number of blocks in one step.
