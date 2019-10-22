@@ -87,13 +87,14 @@ The recent tx fee is the average fee during the recent $n$ blocks:
 $$
 f _ {avg}= \frac{\sum _ {i=1}^{n}{f _ i}}{n},
 $$
-where $f _ i$ is the tx fee for
-the step $i$.
+
+where $f _ i$ is the tx fee for the step $i$.
 
 The suppressing factor $c$ by the tx fee is:
 $$
 c = \frac{f _ {scale}}{f _ {avg} ^ 2 + f _ {scale}},
 $$
+
 where $f _ {scale}$ is a scaling constant.
 
 #### state change
@@ -101,6 +102,7 @@ The number of txs newly generated $t _ i$ for the step $i$ is
 $$
 t _ i = \frac{\tau _ i}{k} \rho,
 $$
+
 where $\tau _ i$ is the tx generation force and $\rho$ is a random variable
 from the chi-square distribution with the degree of freedom $k = 32$.
 
@@ -108,6 +110,7 @@ The tx generation force $\tau$ is
 $$
 \tau _ i = t _ g v _ i b _ s / b _ M c,
 $$
+
 where $t _ g$ is tx generation factor per month, $v _ i$ is the market value
 for the step $i$, $b _ s$ is the number of blocks in one step, $b _ M$ is the
 number of blocks in one month, and $c$ is the suppressing factor.
@@ -144,6 +147,7 @@ The yearly gain $g _ Y$ from the stakes is
 $$
 g _ Y = t _ {avg} (f _ {avg} + w) b _ Y / b _ s,
 $$
+
 where $t _ {avg}$ is average number of processed txs in recent blocks, $w$ is
 the reawrd for each tx, $b _ Y$ is the number of blocks in one year, and $b _
 s$ is the number of blocks in one step.
@@ -152,6 +156,7 @@ The yearly cost for keeping the stakes is
 $$
 c _ Y = 1000 \log _ {10} \left(\frac {s _ i}{10000} + 1\right).
 $$
+
 It means it takes roughly 1,000 USD to keep the stake worth of 100,000 AMO, and
 the running cost decreases in log scale. The yearly net gain is $g _ Y - c _
 Y$.
@@ -162,6 +167,7 @@ change for the step $i$ is
 $$
 \Delta _ s = \frac{\sigma _ i - c _ o}{k} \rho,
 $$
+
 where $\sigma _ i$ is the stake increase force and $\rho$ is a random variable
 from the chi-square distribution with the degree of freedom $k = 32$. $c _ o$
 is an opportunity cost by keeping stakes. $\Delta _ s$ is adjusted according to
@@ -169,13 +175,14 @@ the total amount of coins. An opportunity cost is half of $s _ {i - 1}$.
 
 The stake increase force $\sigma$ is
 $$
-sigma _ i = \frac{g _ Y - c _ Y}{i _ w} - s _ {i - 1},
+\sigma _ i = \frac{g _ Y - c _ Y}{i _ w} - s _ {i - 1},
 $$
+
 where $i _ w$ is the interest rate of the outer world.
 
 The interest rate $i _ i$ of the chain for the step $i$ is
 $$
-i _ i = \frac{g _ Y - c _ Y}{s _ {i - 1}}.
+i _ i = \frac{g _ Y - c _ Y}{s _ i}.
 $$
 
 #### TODO
