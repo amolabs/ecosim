@@ -11,27 +11,28 @@ config = {
         'stepblks': 60*60*24, # in blocks
         #'steps': 24*365,
         #'steps': 24*150,
-        'steps': 2000,
-        'smooth': 50000,
+        'steps': 4000,
+        'smooth': BLKSWEEK,
         }
 param = {
         # chain parameters
         'initial_coins': 20000000000*oneamo,
-        'initial_stakes': 1000000*oneamo,
+        'fixed_dormant': 100000000*oneamo, # 100 million AMO
+        'fixed_stakes': 100000000*oneamo, # 100 million AMO
         'txreward': 0.1*oneamo,
-        'blktxsize': 1000,
+        'blktxsize': 5000,
         'feescale': 0.1,
-        'max_stakechange': 10000*oneamo,
         # market parameters
         'initial_liveness': 0,
-        'f_gdp_month': [10000., 500, 5000, 10],
+        'f_gdp_month': [100, 50, 300, 20],
+        'velocity': 4,
         'initial_exchrate': 0.0005, # USD for one AMO
         'initial_interest_world': 0.02,
-        'txpervalue': 0.1, # one tx per one USD
-        'txgenbase': 0.1, # one tx per block
+        'txpervalue': 100., # one tx per one USD
+        'txgenbase': 0.01, # one tx per block
         'growth_factor': 1.01,
         # depeletion rates
-        'deplete_coin': 0.0001,
+        'deplete_coin': 0.00005,
         'deplete_tx': 0.001,
         }
 state = {
@@ -47,13 +48,16 @@ state = {
             'txfee': 0,
             # assets
             'coins': param['initial_coins'],
-            'coins_active': param['initial_coins'] - param['initial_stakes'],
+            'coins_active': param['initial_coins'] \
+                    - param['fixed_stakes'] - param['fixed_dormant'],
+            'coins_dormant': param['fixed_dormant'],
             'coins_lost': 0,
-            'stakes': param['initial_stakes'],
+            'stakes': param['fixed_stakes'],
             },
         'market': {
             'liveness': param['initial_liveness'],
             'value': param['f_gdp_month'][0],
+            'money_demand': 0,
             'exchange_rate': param['initial_exchrate'], # in AMO, not mote
             'interest_stake': 0,
             'interest_world': param['initial_interest_world'],
@@ -77,6 +81,9 @@ def display_state(state):
     coinsamo = chain['coins_active']/oneamo
     ratio = chain['coins_active'] / chain['coins'] * 100
     print(f'          active        {coinsamo:-20,.3f} AMO ({ratio:.3f}%)')
+    coinsamo = chain['coins_dormant']/oneamo
+    ratio = chain['coins_dormant'] / chain['coins'] * 100
+    print(f'          dormant       {coinsamo:-20,.3f} AMO ({ratio:.3f}%)')
     coinsamo = chain['coins_lost']/oneamo
     ratio = chain['coins_lost'] / chain['coins'] * 100
     print(f'          lost          {coinsamo:-20,.3f} AMO ({ratio:.3f}%)')
@@ -130,11 +137,11 @@ def run(state):
         y_stakes.append(state['chain']['stakes']/oneamo)
     display_state(state)
     plt.plot(steps, y_txgen, '--k')
-    plt.plot(steps, y_txpen, '--g')
+    plt.plot(steps, y_txpen, '--m')
     #plt.plot(steps, y_coins)
     plt.plot(steps, y_txfee_usd, '--r')
-    plt.plot(steps, y_interest, '-y', 'interest')
-    plt.plot(steps, y_liveness, '-m')
+    plt.plot(steps, y_interest, '-y')
+    #plt.plot(steps, y_liveness, '-m')
     plt.plot(steps, y_exchange, '-g')
     plt.plot(steps, y_value, '-k')
     plt.plot(steps, y_active, '-r')
@@ -151,7 +158,9 @@ players.config = config
 nplayers.config = config
 players.param = param
 nplayers.param = param
+#nplayers.hist_size = int(BLKSWEEK / config['stepblks'])
 nplayers.hist_size = int(BLKSMONTH / config['stepblks'])
+#nplayers.hist_size = int(BLKSQUARTER / config['stepblks'])
 
 print( '==================================================================')
 #for i in range(5):
