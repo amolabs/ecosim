@@ -3,8 +3,6 @@
 from const import *
 import math
 from scipy import stats
-#import numpy as np
-#import matplotlib as mpl
 
 import nplayers
 
@@ -14,24 +12,6 @@ def users(state):
     hist = nplayers.hist
 
     avg_txfee = sum(hist['txfee']) / len(hist['txfee'])
-
-    # update liveness
-    tmp = market['liveness']
-    # increase by growth factor
-    f = param['growth_factor']
-    ## suppress by tx fee
-    fee_usd = avg_txfee / oneamo * market['exchange_rate']
-    f *= param['feescale'] / (fee_usd + param['feescale'])
-    #fee_factor = math.log10(fee_factor) + 1
-    tmp *= f
-    # range check
-    tmp = min(tmp, 1.)
-    tmp = max(tmp, 0.00001)
-    # update
-    market['liveness'] = tmp
-    # smoothing
-    #smooth = config['smooth'] / config['stepblks']
-    #market['liveness'] = (tmp + (smooth-1)*market['liveness']) / smooth
 
     # generate txs depending on market value
     txforce = param['txpervalue'] * market['value'] \
