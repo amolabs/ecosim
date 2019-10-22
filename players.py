@@ -64,13 +64,13 @@ def validators(state):
     upstake = (upforce - downforce) / df * rv.rvs()
     upstake = int(upstake)
 
-    # update interest rate
-    interest = net_gain_year / (chain['stakes'] + DELTA_MOTE)
-    interest = max(interest, 0)
-    market['interest_stake'] = interest
-
     # limit by asset status
     upstake = min(upstake, chain['coins_active'])
     upstake = max(upstake, -(chain['stakes'] - param['fixed_stakes']))
     chain['stakes'] += upstake
     chain['coins_active'] -= upstake
+
+    # update interest rate
+    interest = net_gain_year / (chain['stakes'] + DELTA_MOTE)
+    interest = max(interest, 0)
+    market['interest_stake'] = interest
