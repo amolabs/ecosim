@@ -108,7 +108,7 @@ from the chi-square distribution with the degree of freedom $k = 32$.
 
 The tx generation force $\tau$ is
 $$
-\tau _ i = t _ g v _ i b _ s / b _ M c,
+\tau _ i = t _ g v _ i \frac{b _ s}{b _ M} c,
 $$
 
 where $t _ g$ is tx generation factor per month, $v _ i$ is the market value
