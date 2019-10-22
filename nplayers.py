@@ -59,19 +59,47 @@ def invisible(state):
     avg_pending = sum(hist['txpending']) / len(hist['txpending'])
     blks = avg_pending / param['blktxsize']
     fee_usd = param['feescale'] * blks / BLKSHOUR # in USD
-    fee = int(fee_usd / market['exchange_rate'] * oneamo) # in mote
+    fee = int(fee_usd / market['exchange_rate'] * moteperamo)
     # update
     chain['txfee'] = fee
     #smooth = config['smooth'] / config['stepblks']
     #chain['txfee'] = int((fee + (smooth-1)*chain['txfee']) / smooth)
 
     # update exchange rate
-    exch = market['value'] \
-            / (chain['coins_active'] + chain['stakes'] * 0.0001) \
-            * oneamo
-    # update
+    if len(hist['exch']) == 0:
+        avg_exch = market['exchange_rate']
+    else:
+        avg_exch = sum(hist['exch']) / len(hist['exch'])
+    usdperamo = avg_exch
+    demand = 0
+    supply = 0
+    ## money demand for market trade
+    v = param['velocity']
+    coin_value = chain['coins_active'] / moteperamo * usdperamo
+    market_value = market['value']
+    demand += market_value / v
+    supply += coin_value
+    ## money demand for storing value
+    #sc = chain['stakes']
+    #demand += (market['interest_stake'] * sc) / market['interest_world'] - sc
+    ## money demand for staking
+    h = hist['stakes']
+    l = len(h)
+    change = (h[l-1] - h[l-2]) / moteperamo * usdperamo
+    if change > 0:
+        demand += change
+    else:
+        supply += change
+    ## money demand from short-term compensation
+    demand += chain['coins_active'] / moteperamo * (avg_exch - usdperamo)
+    ## money demand from long-term expectation
+    demand += chain['coins'] / moteperamo * (usdperamo - avg_exch)
+    ## sum up
+    exch = demand / supply 
+    ## smoothing
     smooth = max(int(config['smooth'] / config['stepblks']), 2)
-    market['exchange_rate'] = (exch + (smooth-1)*market['exchange_rate']) / smooth
+    old = market['exchange_rate']
+    market['exchange_rate'] = (exch + (smooth-1)*old) / smooth
 
 hist_size = 1
 hist = {
