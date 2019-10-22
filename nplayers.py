@@ -50,12 +50,24 @@ def invisible(state):
     smooth = max(int(config['smooth'] / config['stepblks']), 2)
     market['exchange_rate'] = (exch + (smooth-1)*market['exchange_rate']) / smooth
 
-hist_size = 0
-hist = {'txpending': [0], 'txfee': [0]}
+hist_size = 1
+hist = {
+        'txproc': [0],
+        'txpending': [0],
+        'txfee': [0],
+        'stakes': [0],
+        'exch': [],
+        }
 def historian(state):
+    hist['txproc'].append(state['chain']['stat_txproc'])
     hist['txpending'].append(state['chain']['txpending'])
     hist['txfee'].append(state['chain']['txfee'])
+    hist['stakes'].append(state['chain']['stakes'])
+    hist['exch'].append(state['market']['exchange_rate'])
     l = len(hist['txpending'])
     if l > hist_size:
+        hist['txproc'] = hist['txproc'][l-hist_size:]
         hist['txpending'] = hist['txpending'][l-hist_size:]
         hist['txfee'] = hist['txfee'][l-hist_size:]
+        hist['stakes'] = hist['stakes'][l-hist_size:]
+        hist['exch'] = hist['exch'][l-hist_size:]
