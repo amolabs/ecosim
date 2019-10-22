@@ -145,7 +145,7 @@ The recent tx fee is dealt with as in [user actor](#user) section.
 #### state change
 The yearly gain $g _ Y$ from the stakes is
 $$
-g _ Y = t _ {avg} (f _ {avg} + w) b _ Y / b _ s,
+g _ Y = t _ {avg} (f _ {avg} + w) \frac{b _ Y}{b _ s},
 $$
 
 where $t _ {avg}$ is average number of processed txs in recent blocks, $w$ is
