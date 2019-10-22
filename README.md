@@ -101,7 +101,7 @@ where <img src="/tex/01b0465185bb384080bdb4a21f4697d9.svg?invert_in_darkmode&san
 from the chi-square distribution with the degree of freedom <img src="/tex/e22736d49a06f33738cb98ea7cd74076.svg?invert_in_darkmode&sanitize=true" align=middle width=47.43141149999999pt height=22.831056599999986pt/>.
 
 The tx generation force <img src="/tex/0fe1677705e987cac4f589ed600aa6b3.svg?invert_in_darkmode&sanitize=true" align=middle width=9.046852649999991pt height=14.15524440000002pt/> is
-<p align="center"><img src="/tex/b19f76c67040db316517a76a24405ff4.svg?invert_in_darkmode&sanitize=true" align=middle width=117.22782059999999pt height=17.031940199999998pt/></p>
+<p align="center"><img src="/tex/1a961adf5e360e5bcf325a168a8a08ba.svg?invert_in_darkmode&sanitize=true" align=middle width=98.87270745000001pt height=36.2778141pt/></p>
 
 where <img src="/tex/4a3ffb0f9c9dfb20850580c316fbafdf.svg?invert_in_darkmode&sanitize=true" align=middle width=12.76206689999999pt height=20.221802699999984pt/> is tx generation factor per month, <img src="/tex/f93b76600ef1549fec19f91026179698.svg?invert_in_darkmode&sanitize=true" align=middle width=12.61896569999999pt height=14.15524440000002pt/> is the market value
 for the step <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/>, <img src="/tex/9e0f245dc3cfa0eafdd01fc2a09cc282.svg?invert_in_darkmode&sanitize=true" align=middle width=13.259167349999991pt height=22.831056599999986pt/> is the number of blocks in one step, <img src="/tex/d5d2534bdb7c9a1a3a95534dc6df45ad.svg?invert_in_darkmode&sanitize=true" align=middle width=20.82425399999999pt height=22.831056599999986pt/> is the
