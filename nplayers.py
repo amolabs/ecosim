@@ -1,6 +1,7 @@
 # vim: set sw=4 ts=4 expandtab :
 
 from const import *
+import math
 
 def teller(chain):
     tx_to_process = min(
@@ -28,6 +29,28 @@ def depleter(chain):
 def invisible(state):
     chain = state['chain']
     market = state['market']
+
+    # update market value
+    tmp = market['value']
+    ## method 1
+    #tmp *= math.pow(param['growth_factor'], config['stepblks'] / BLKSDAY)
+    #tmp = max(tmp, 0.001)
+    #market['value'] = tmp
+    ## method 2
+    #tmp *= math.pow(0.3, chain['blks'] / BLKSMONTH)
+    #market['value'] += tmp
+    ## method 3
+    x = chain['blks'] / BLKSMONTH
+    market['value'] = \
+            param['f_gdp_month'][3] * x**3 \
+            + param['f_gdp_month'][2] * x**2 \
+            + param['f_gdp_month'][1] * x \
+            + param['f_gdp_month'][0]
+    ## others
+    #tmp *= math.log10(market['liveness'] + 1) + 1
+    #tmp *= param['growth_factor']
+    #tmp *= param['growth_factor'] / (fee_usd + param['feescale'])
+    #tmp *= math.pow(param['growth_factor'], config['stepblks'] / BLKSMONTH)
 
     # update tx fee
     # estimate remaining blocks until all of the currently pending txs would be
