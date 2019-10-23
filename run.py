@@ -25,6 +25,7 @@ param = {
         # market parameters
         'initial_liveness': 0,
         'f_gdp_month': [100, 50, 300, 20],
+        #'f_gdp_month': [100, 50, 3000, -22.5],
         'velocity': 4,
         'initial_exchrate': 0.0005, # USD for one AMO
         'initial_interest_world': 0.02,

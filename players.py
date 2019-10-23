@@ -61,7 +61,9 @@ def validators(state):
     # mimic human unpredictability using random variable
     df = 32
     rv = stats.chi2(df)
-    upstake = (upforce - downforce) / df * rv.rvs()
+    upstake = (upforce - downforce) / 10 * rv.rvs() / df
+    if upstake < 0:
+        upstake /= 10
     upstake = int(upstake)
 
     # limit by asset status
