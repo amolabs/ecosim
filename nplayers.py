@@ -51,6 +51,7 @@ def invisible(state):
     #tmp *= param['growth_factor']
     #tmp *= param['growth_factor'] / (fee_usd + param['feescale'])
     #tmp *= math.pow(param['growth_factor'], config['stepblks'] / BLKSMONTH)
+    market['value'] = max(market['value'], 0)
 
     # update tx fee
     # estimate remaining blocks until all of the currently pending txs would be
@@ -71,8 +72,8 @@ def invisible(state):
     else:
         avg_exch = sum(hist['exch']) / len(hist['exch'])
     usdperamo = avg_exch
-    demand = 0
-    supply = 0
+    demand = DELTA_AMO
+    supply = DELTA_AMO # avoid divide-by-zero error
     ## money demand for market trade
     v = param['velocity']
     coin_value = chain['coins_active'] / moteperamo * usdperamo
