@@ -2,19 +2,28 @@
 
 from const import *
 import math
+from scipy import stats
 
 def teller(state, nstate):
-    chain = state['chain']
+    nchain = nstate['chain']
+
+    # mimic network unpredictability using random variable
+    df = int(math.log10(nchain['txpending'] + 10))
+    rv = stats.chi2(df)
+    lazy_txs = int(0.01 * nchain['txpending'] * rv.rvs() / df)
+    lazy_txs = min(lazy_txs, nchain['txpending'])
     tx_to_process = min(
-            nstate['chain']['txpending'],
+            nchain['txpending'] - lazy_txs,
             param['blktxsize'] * config['stepblks']
             )
-    nstate['chain']['stat_txproc'] = tx_to_process
-    nstate['chain']['txpending'] -= tx_to_process
+    nchain['stat_txproc'] = tx_to_process
+    nchain['txpending'] -= tx_to_process
     # reward
     reward = int(tx_to_process * param['txreward'])
-    nstate['chain']['coins'] += reward
-    nstate['chain']['coins_active'] += reward
+    #reward = int(tx_to_process * param['txreward'] * 10)
+    #reward = int(config['stepblks']*10*moteperamo)
+    nchain['coins'] += reward
+    nchain['coins_active'] += reward
 
 def depleter(state, nstate):
     chain = state['chain']
@@ -31,6 +40,13 @@ def depleter(state, nstate):
 def invisible(state, nstate):
     chain = state['chain']
     market = state['market']
+
+    # get usdperamo
+    if len(hist['exch']) == 0:
+        avg_exch = market['exchange_rate']
+    else:
+        avg_exch = sum(hist['exch']) / len(hist['exch'])
+    usdperamo = avg_exch
 
     # update market value
     tmp = market['value']
@@ -60,21 +76,16 @@ def invisible(state, nstate):
     # one param['feescale'] USD for one hour
     avg_pending = sum(hist['txpending']) / len(hist['txpending'])
     blks = avg_pending / param['blktxsize']
-    fee_usd = param['feescale'] * blks / BLKSHOUR # in USD
-    fee = int(fee_usd / market['exchange_rate'] * moteperamo)
+    fee_usd = param['feescale'] * blks / BLKSHOUR
+    fee = int(fee_usd / usdperamo * moteperamo)
     # update
     nstate['chain']['txfee'] = fee
-    #smooth = config['smooth'] / config['stepblks']
+    #smooth = max(int(config['smooth'] / config['stepblks']), 2)
     #chain['txfee'] = int((fee + (smooth-1)*chain['txfee']) / smooth)
 
     # update exchange rate
-    if len(hist['exch']) == 0:
-        avg_exch = market['exchange_rate']
-    else:
-        avg_exch = sum(hist['exch']) / len(hist['exch'])
-    usdperamo = avg_exch
-    demand = DELTA_AMO
-    supply = DELTA_AMO # avoid divide-by-zero error
+    demand = 0
+    supply = 0
     ## money demand for market trade
     v = param['velocity']
     coin_value = chain['coins_active'] / moteperamo * usdperamo
@@ -91,12 +102,24 @@ def invisible(state, nstate):
     if change > 0:
         demand += change
     else:
-        supply += change
-    ## money demand from short-term compensation
-    demand += chain['coins_active'] / moteperamo * (avg_exch - usdperamo)
+        supply += -change
+    ## money demand from short-term negative feedback
+    f = chain['coins_active'] / moteperamo \
+            * (avg_exch - market['exchange_rate'])
+    if f > 0:
+        demand += f
+    else:
+        supply += -f
     ## money demand from long-term expectation
-    demand += chain['coins'] / moteperamo * (usdperamo - avg_exch)
+    #f = chain['coins'] / moteperamo \
+    #        * (market['exchange_rate'] - avg_exch)
+    #if f > 0:
+    #    demand += f
+    #else:
+    #    supply += -f
     ## sum up
+    demand = min(demand, chain['coins']) # avoid infinity
+    supply = max(supply, DELTA_AMO) # avoid divide-by-zero error
     exch = demand / supply 
     ## smoothing
     smooth = max(int(config['smooth'] / config['stepblks']), 2)

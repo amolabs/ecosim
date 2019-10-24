@@ -18,7 +18,7 @@ def users(state, nstate):
             * config['stepblks'] / BLKSMONTH
     # adjust by tx fee
     fee_usd = avg_txfee / oneamo * market['exchange_rate']
-    txforce *= param['feescale'] / (fee_usd**2 + param['feescale'])
+    txforce *= param['feecap'] / (fee_usd + param['feecap'])
 
     # mimic human unpredictability using random variable
     df = 32
