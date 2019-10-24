@@ -47,16 +47,26 @@ def validators(state, nstate):
     # yearly running cost for validator nodes
     cost_year = 1000 * math.log10(chain['stakes'] / 10000 + 1)
     net_gain_year = gain_year - cost_year
-
     #ic = market['interest_stake']
     #ic = avg_interest
     iw = market['interest_world']
     sc = chain['stakes']
+    # upforce
     upforce = net_gain_year / iw - sc
 
     # opportunity cost by keeping stakes
     oppcost = chain['stakes'] / 2
-    downforce = oppcost
+    # resistance against active coin drain
+    # tends to keep 10% of total coins as active
+    #room = max(chain['coins_active'] - upforce, 0)
+    room = chain['coins_active']
+    ratio = room / chain['coins']
+    room = min(room, 0.1)
+    drain_resistance = math.pow(math.tan(math.pi*10*(0.1-room)), 2)
+    # scaling
+    drain_resistance *= upforce
+    # downforce
+    downforce = oppcost + drain_resistance
 
     # mimic human unpredictability using random variable
     df = 32

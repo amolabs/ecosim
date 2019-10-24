@@ -118,8 +118,10 @@ def invisible(state, nstate):
     #else:
     #    supply += -f
     ## sum up
-    demand = min(demand, chain['coins']) # avoid infinity
-    supply = max(supply, DELTA_AMO) # avoid divide-by-zero error
+    # avoid infinity
+    demand = min(demand, chain['coins'] / moteperamo * usdperamo)
+    # avoid divide-by-zero error
+    supply = max(supply, DELTA_AMO)
     exch = demand / supply 
     ## smoothing
     smooth = max(int(config['smooth'] / config['stepblks']), 2)
