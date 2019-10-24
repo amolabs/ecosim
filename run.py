@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 # vim: set sw=4 ts=4 expandtab :
 
+import copy
+
 from const import *
 import players
 import nplayers
@@ -23,7 +25,7 @@ param = {
         'blktxsize': 5000,
         'feescale': 0.1,
         # market parameters
-        'initial_liveness': 0,
+        #'initial_liveness': 0,
         'f_gdp_month': [100, 50, 300, 20],
         #'f_gdp_month': [100, 50, 3000, -22.5],
         'velocity': 4,
@@ -42,7 +44,7 @@ state = {
             # tx statistics
             'stat_txgen': 0,
             'stat_txproc': 0,
-            'stat_txlost': 0,
+            'accum_txlost': 0,
             # tx dynamics
             'blks': 0,
             'txpending': 0,
@@ -56,7 +58,7 @@ state = {
             'stakes': param['fixed_stakes'],
             },
         'market': {
-            'liveness': param['initial_liveness'],
+            #'liveness': param['initial_liveness'],
             'value': param['f_gdp_month'][0],
             'money_demand': 0,
             'exchange_rate': param['initial_exchrate'], # in AMO, not mote
@@ -71,7 +73,7 @@ def display_state(state):
     days = chain['blks']/60/60/24
     print(f'run steps: {state["steps"]}, {chain["blks"]} blocks = {days:.2f} days')
     # chain stat
-    print(f'tx: {chain["stat_txgen"]:-12,d}(+) {chain["stat_txproc"]:-12,d}(-)  {chain["stat_txlost"]:-7,d} lost  {chain["txpending"]:-6,d} pending')
+    print(f'tx: {chain["stat_txgen"]:-12,d}(+) {chain["stat_txproc"]:-12,d}(-)  {chain["accum_txlost"]:-7,d} lost  {chain["txpending"]:-6,d} pending')
     coinsamo = chain['txfee']/oneamo
     print(f'  tx fee:               {coinsamo:-20,.3f} AMO / tx')
     usd = coinsamo * market['exchange_rate']
@@ -95,20 +97,23 @@ def display_state(state):
     # market
     print(f'  market: value         {market["value"]:-20,.3f} USD')
     print(f'          exchange      {market["exchange_rate"]:-21,.4f} USD/AMO')
-    print(f'          liveness      {market["liveness"]:-21,.4f}')
+    #print(f'          liveness      {market["liveness"]:-21,.4f}')
     print(f'          interest      {market["interest_stake"]:-21,.4f}')
     #print(f'  debug1 = {players.debug1:,}')
     #print(f'  debug1 = {nplayers.debug1:,}')
 
 def step(state):
-    state['steps'] += 1
-    state['chain']['blks'] += config['stepblks']
-    players.users(state)
-    players.validators(state)
-    nplayers.teller(state['chain'])
-    nplayers.depleter(state['chain'])
-    nplayers.invisible(state)
-    nplayers.historian(state)
+    #nstate = {'chain':{}, 'market':{}}
+    nstate = copy.deepcopy(state)
+    nstate['steps'] += 1
+    nstate['chain']['blks'] += config['stepblks']
+    players.users(state, nstate)
+    players.validators(state, nstate)
+    nplayers.teller(state, nstate)
+    nplayers.depleter(state, nstate)
+    nplayers.invisible(state, nstate)
+    nplayers.historian(nstate)
+    return nstate
 
 def run(state):
     steps = []
@@ -117,13 +122,13 @@ def run(state):
     y_coins = []
     y_txfee_usd = []
     y_interest = []
-    y_liveness = []
+    #y_liveness = []
     y_exchange = []
     y_value = []
     y_active = []
     y_stakes = []
     for i in range(config['steps']):
-        step(state)
+        state = step(state)
         steps.append(state['steps'])
         y_txgen.append(state['chain']['stat_txgen'])
         y_txpen.append(state['chain']['txpending'])
@@ -131,7 +136,7 @@ def run(state):
         y_txfee_usd.append(state['chain']['txfee']/oneamo \
                 * state['market']['exchange_rate'])
         y_interest.append(state['market']['interest_stake'])
-        y_liveness.append(state['market']['liveness'])
+        #y_liveness.append(state['market']['liveness'])
         y_exchange.append(state['market']['exchange_rate'])
         y_value.append(state['market']['value'])
         y_active.append(state['chain']['coins_active']/oneamo)
@@ -148,6 +153,7 @@ def run(state):
     plt.plot(steps, y_active, '-r')
     plt.plot(steps, y_stakes, '-b')
     print()
+    return state
 
 coinsamo = param['initial_coins']/oneamo
 print(f'init coins:    {coinsamo:-20,.3f} AMO')
@@ -165,7 +171,7 @@ nplayers.hist_size = int(BLKSMONTH / config['stepblks'])
 
 print( '==================================================================')
 #for i in range(5):
-run(state)
+state = run(state)
 
 plt.xlabel('steps')
 #plt.ylabel('ylabel')

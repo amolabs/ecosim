@@ -3,30 +3,32 @@
 from const import *
 import math
 
-def teller(chain):
+def teller(state, nstate):
+    chain = state['chain']
     tx_to_process = min(
-            chain['txpending'],
+            nstate['chain']['txpending'],
             param['blktxsize'] * config['stepblks']
             )
-    chain['stat_txproc'] = tx_to_process
-    chain['txpending'] -= tx_to_process
+    nstate['chain']['stat_txproc'] = tx_to_process
+    nstate['chain']['txpending'] -= tx_to_process
     # reward
     reward = int(tx_to_process * param['txreward'])
-    chain['coins'] += reward
-    chain['coins_active'] += reward
+    nstate['chain']['coins'] += reward
+    nstate['chain']['coins_active'] += reward
 
-def depleter(chain):
+def depleter(state, nstate):
+    chain = state['chain']
     # asset loss
     depletion = int(chain['coins_active'] * param['deplete_coin'])
-    chain['coins_active'] -= depletion
-    chain['coins_lost'] += depletion
+    nstate['chain']['coins_active'] -= depletion
+    nstate['chain']['coins_lost'] += depletion
     # tx loss
     txlost = int(chain['txpending'] * param['deplete_tx'])
-    chain['stat_txlost'] += txlost
-    chain['txpending'] -= txlost
+    nstate['chain']['accum_txlost'] += txlost
+    nstate['chain']['txpending'] -= txlost
 
 # invisible hand to intermediate supply and demand
-def invisible(state):
+def invisible(state, nstate):
     chain = state['chain']
     market = state['market']
 
@@ -41,8 +43,7 @@ def invisible(state):
     #market['value'] += tmp
     ## method 3
     x = chain['blks'] / BLKSMONTH
-    market['value'] = \
-            param['f_gdp_month'][3] * x**3 \
+    value = param['f_gdp_month'][3] * x**3 \
             + param['f_gdp_month'][2] * x**2 \
             + param['f_gdp_month'][1] * x \
             + param['f_gdp_month'][0]
@@ -51,7 +52,7 @@ def invisible(state):
     #tmp *= param['growth_factor']
     #tmp *= param['growth_factor'] / (fee_usd + param['feescale'])
     #tmp *= math.pow(param['growth_factor'], config['stepblks'] / BLKSMONTH)
-    market['value'] = max(market['value'], 0)
+    nstate['market']['value'] = max(value, 0)
 
     # update tx fee
     # estimate remaining blocks until all of the currently pending txs would be
@@ -62,7 +63,7 @@ def invisible(state):
     fee_usd = param['feescale'] * blks / BLKSHOUR # in USD
     fee = int(fee_usd / market['exchange_rate'] * moteperamo)
     # update
-    chain['txfee'] = fee
+    nstate['chain']['txfee'] = fee
     #smooth = config['smooth'] / config['stepblks']
     #chain['txfee'] = int((fee + (smooth-1)*chain['txfee']) / smooth)
 
@@ -100,7 +101,7 @@ def invisible(state):
     ## smoothing
     smooth = max(int(config['smooth'] / config['stepblks']), 2)
     old = market['exchange_rate']
-    market['exchange_rate'] = (exch + (smooth-1)*old) / smooth
+    nstate['market']['exchange_rate'] = (exch + (smooth-1)*old) / smooth
 
 hist_size = 1
 hist = {

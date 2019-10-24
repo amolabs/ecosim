@@ -6,7 +6,7 @@ from scipy import stats
 
 import nplayers
 
-def users(state):
+def users(state, nstate):
     chain = state['chain']
     market = state['market']
     hist = nplayers.hist
@@ -26,12 +26,12 @@ def users(state):
     newtxs = txforce / df * rv.rvs()
     newtxs = int(newtxs)
 
-    chain['stat_txgen'] = newtxs
-    chain['txpending'] += newtxs
+    nstate['chain']['stat_txgen'] = newtxs
+    nstate['chain']['txpending'] += newtxs
 
     # TODO: desires to sell or buy
 
-def validators(state):
+def validators(state, nstate):
     chain = state['chain']
     market = state['market']
     hist = nplayers.hist
@@ -69,10 +69,10 @@ def validators(state):
     # limit by asset status
     upstake = min(upstake, chain['coins_active'])
     upstake = max(upstake, -(chain['stakes'] - param['fixed_stakes']))
-    chain['stakes'] += upstake
-    chain['coins_active'] -= upstake
+    nstate['chain']['stakes'] += upstake
+    nstate['chain']['coins_active'] -= upstake
 
     # update interest rate
     interest = net_gain_year / (chain['stakes'] + DELTA_MOTE)
     interest = max(interest, 0)
-    market['interest_stake'] = interest
+    nstate['market']['interest_stake'] = interest
