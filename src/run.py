@@ -24,10 +24,9 @@ param = {
         'feescale': 0.00001,
         'feecap': 0.1,
         # market parameters
-        #'f_gdp_month': [100, 50, 300, 20], # lower order first
-        #'f_gdp_month': [100, 50, 3000, -22.5], # lower order first
-        #'f_gdp_month': [20., 300., 50., 100.], # higher order first
-        'f_gdp_month': [0, 7000000.], # higher order first
+        #'f_gdp_month': [1000.], # higher order first
+        'f_gdp_month': [10000000.], # higher order first
+        #'f_gdp_month': [10000, 10000, 1000.], # higher order first
         'velocity': 1,
         'transfer_cost_factor': 1,
         'txpervalue': 100., # one tx per one USD
@@ -193,7 +192,7 @@ ass.plot(xarr, recarr.output, color='black', linestyle='solid')
 
 eco.plot(xarr, recarr.price_level, color='cyan', linestyle='solid')
 eco.plot(xarr, recarr.txfee, color='red', linestyle='dashed')
-eco.plot(xarr, recarr.interest_amo, color='goldenrod', linestyle='dashed')
+eco.plot(xarr, recarr.interest_amo, color='blue', linestyle='dashed')
 eco.plot(xarr, recarr.ex_long, color='green', linestyle='solid', linewidth=5, alpha=0.5)
 eco.plot(xarr, recarr.usdperamo, color='green', linestyle='dashed')
 eco.plot(xarr, recarr.step_txgen, color='black', linestyle='solid', linewidth=5, alpha=0.5)
