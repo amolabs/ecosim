@@ -11,7 +11,7 @@ def init_gdp(gdp_coeff):
     gdp_func = poly1d(gdp_coeff)
 
 def get_output(state):
-    y0 = gdp_func(state.steps)
+    y0 = gdp_func(state.steps * config['stepblks'] / BLKSMONTH)
     if config['dormant']:
         ms = state.coins_active + state.coins_dormant
     else:
@@ -21,10 +21,10 @@ def get_output(state):
     v = param['velocity']
     c = param['transfer_cost_factor']
 
-    y = 2 * r / c * (ms * v / p)**2
-    output = min(y0, y)
+    #y = 2 * r / c * (ms * v / p)**2
+    #output = min(y0, y)
     #print(y0, y, output)
-    #output = y0
+    output = y0
 
     return output
 
