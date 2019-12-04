@@ -14,7 +14,7 @@ config = {
         #'steps': 24*365,
         #'steps': 24*150,
         'steps': 4000,
-        'smooth': BLKSMONTH,
+        'smooth': BLKSWEEK,
         }
 param = {
         # chain parameters
@@ -22,9 +22,9 @@ param = {
         'fixed_dormant': 100000000*oneamo, # 100 million AMO
         'fixed_stakes': 100000000*oneamo, # 100 million AMO
         'txreward': 0.1*oneamo,
-        'blktxsize': 1000,
-        'feescale': 0.01,
-        'feecap': 1.,
+        'blktxsize': 100,
+        'feescale': 0.001,
+        'feecap': 0.1,
         # market parameters
         #'initial_liveness': 0,
         'f_gdp_month': [100, 50, 300, 20],
@@ -39,6 +39,7 @@ param = {
         'deplete_coin': 0.00005,
         'deplete_tx': 0.001,
         }
+# initial state
 state = {
         'steps': 0,
         'chain': {

@@ -23,7 +23,8 @@ def users(state, nstate):
     # mimic human unpredictability using random variable
     df = 32
     rv = stats.chi2(df)
-    newtxs = txforce / df * rv.rvs()
+    #newtxs = txforce * rv.rvs() / df
+    newtxs = txforce
     newtxs = int(newtxs)
 
     nstate['chain']['stat_txgen'] = newtxs
@@ -53,31 +54,35 @@ def validators(state, nstate):
     sc = chain['stakes']
     # upforce
     upforce = net_gain_year / iw - sc
+    # resistance against active coin drain
+    # tends to keep 10% of total coins as active
+    room = chain['coins_active']
+    ratio = min(room / chain['coins'], 0.1)
+    resist = math.tan(math.pi/2*(1-10*ratio))
+    #print(upforce, resist, room)
+    #upforce /= max(resist, 1)
 
     # opportunity cost by keeping stakes
     oppcost = chain['stakes'] / 2
-    # resistance against active coin drain
-    # tends to keep 10% of total coins as active
-    #room = max(chain['coins_active'] - upforce, 0)
+    # compensation for low active coins
     room = chain['coins_active']
-    ratio = room / chain['coins']
-    room = min(room, 0.1)
-    drain_resistance = math.pow(math.tan(math.pi*10*(0.1-room)), 2)
-    # scaling
-    drain_resistance *= upforce
+    ratio = min(room / chain['coins'], 0.1)
+    repel = math.tan(math.pi/2*(1-10*ratio))
     # downforce
-    downforce = oppcost + drain_resistance
+    #downforce = oppcost + repel
+    downforce = oppcost
 
     # mimic human unpredictability using random variable
     df = 32
     rv = stats.chi2(df)
-    upstake = (upforce - downforce) / 10 * rv.rvs() / df
+    #upstake = (upforce - downforce) / 10 * rv.rvs() / df
+    upstake = (upforce - downforce) / 10
     if upstake < 0:
         upstake /= 10
     upstake = int(upstake)
 
     # limit by asset status
-    upstake = min(upstake, chain['coins_active'])
+    upstake = min(upstake, chain['coins_active']/10)
     upstake = max(upstake, -(chain['stakes'] - param['fixed_stakes']))
     nstate['chain']['stakes'] += upstake
     nstate['chain']['coins_active'] -= upstake

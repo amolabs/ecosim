@@ -10,8 +10,9 @@ def teller(state, nstate):
     # mimic network unpredictability using random variable
     df = int(math.log10(nchain['txpending'] + 10))
     rv = stats.chi2(df)
-    lazy_txs = int(0.01 * nchain['txpending'] * rv.rvs() / df)
-    lazy_txs = min(lazy_txs, nchain['txpending'])
+    #lazy_txs = int(0.01 * nchain['txpending'] * rv.rvs() / df)
+    lazy_txs = int(0.1 * nchain['txpending'])
+    #lazy_txs = min(lazy_txs, nchain['txpending']) # compensate rv.rvs()
     tx_to_process = min(
             nchain['txpending'] - lazy_txs,
             param['blktxsize'] * config['stepblks']
@@ -83,6 +84,14 @@ def invisible(state, nstate):
     #smooth = max(int(config['smooth'] / config['stepblks']), 2)
     #chain['txfee'] = int((fee + (smooth-1)*chain['txfee']) / smooth)
 
+    # TODO: consider these (when assessing demand):
+    # - expected (real) rate of return
+    #   - current exchage rate
+    #   - expected exchange rate in the future
+    #   - current interest rate
+    # - risk and uncertainty
+    # - liquidity
+
     # update exchange rate
     demand = 0
     supply = 0
@@ -95,21 +104,13 @@ def invisible(state, nstate):
     ## money demand for storing value
     #sc = chain['stakes']
     #demand += (market['interest_stake'] * sc) / market['interest_world'] - sc
-    ## money demand for staking
-    h = hist['stakes']
-    l = len(h)
-    change = (h[l-1] - h[l-2]) / moteperamo * usdperamo
-    if change > 0:
-        demand += change
-    else:
-        supply += -change
     ## money demand from short-term negative feedback
-    f = chain['coins_active'] / moteperamo \
+    fb = chain['coins_active'] / moteperamo / 10 \
             * (avg_exch - market['exchange_rate'])
-    if f > 0:
-        demand += f
+    if fb > 0:
+        demand += fb
     else:
-        supply += -f
+        supply += -fb
     ## money demand from long-term expectation
     #f = chain['coins'] / moteperamo \
     #        * (market['exchange_rate'] - avg_exch)
