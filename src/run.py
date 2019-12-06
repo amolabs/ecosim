@@ -12,7 +12,7 @@ import machine
 
 config = {
         'stepblks': 60*60*24, # in blocks
-        'steps': 1000,
+        'steps': 5000,
         #'steps': 24*200,
         #'steps': 10,
         'dormant': False,
@@ -25,8 +25,8 @@ param = {
         'feecap': 0.1,
         # market parameters
         #'f_gdp_month': [1000.], # higher order first
-        'f_gdp_month': [10000000.], # higher order first
-        #'f_gdp_month': [10000, 10000, 1000.], # higher order first
+        #'f_gdp_month': [10000000.], # higher order first
+        'f_gdp_month': [10000, 10000, 1000.], # higher order first
         'velocity': 1,
         'transfer_cost_factor': 1,
         'txpervalue': 100., # one tx per one USD
@@ -183,20 +183,37 @@ eco = axs[1]
 ass.set_yscale('log')
 eco.set_yscale('log')
 
-ass.plot(xarr, recarr.coins_active, color='red', linestyle='solid')
-ass.plot(xarr, recarr.coins_dormant, color='grey', linestyle='solid')
-ass.plot(xarr, recarr.stakes, color='blue', linestyle='solid')
-ass.plot(xarr, recarr.money_demand, color='red', linestyle='solid', linewidth=5, alpha=0.5)
-ass.plot(xarr, recarr.real_money_demand, color='yellow', linestyle='solid', linewidth=5, alpha=0.5)
-ass.plot(xarr, recarr.output, color='black', linestyle='solid')
+ass.plot(xarr, recarr.coins_active, label='active coins (AMO)',
+        color='red', linestyle='solid')
+ass.plot(xarr, recarr.coins_dormant, #label='dormant coins (AMO)',
+        color='grey', linestyle='solid')
+ass.plot(xarr, recarr.stakes, label='stakes (AMO)',
+        color='blue', linestyle='solid')
+ass.plot(xarr, recarr.money_demand, label='money demand (AMO)',
+        color='red', linestyle='solid', linewidth=6, alpha=0.3)
+ass.plot(xarr, recarr.real_money_demand, #label='real money demand (REAL)',
+        color='yellow', linestyle='solid', linewidth=6, alpha=0.3)
+ass.plot(xarr, recarr.output, label='economy output (REAL)',
+        color='black', linestyle='solid')
 
-eco.plot(xarr, recarr.price_level, color='cyan', linestyle='solid')
-eco.plot(xarr, recarr.txfee, color='red', linestyle='dashed')
-eco.plot(xarr, recarr.interest_amo, color='blue', linestyle='dashed')
-eco.plot(xarr, recarr.ex_long, color='green', linestyle='solid', linewidth=5, alpha=0.5)
-eco.plot(xarr, recarr.usdperamo, color='green', linestyle='dashed')
-eco.plot(xarr, recarr.step_txgen, color='black', linestyle='solid', linewidth=5, alpha=0.5)
-eco.plot(xarr, recarr.step_txproc, color='black', linestyle='dashed')
-eco.plot(xarr, recarr.txpending, color='darkgray', linestyle='dashed')
+eco.plot(xarr, recarr.price_level, label='price level (AMO / unit)',
+        color='cyan', linestyle='solid')
+eco.plot(xarr, recarr.txfee, label='tx fee (AMO / tx)',
+        color='red', linestyle='dashed')
+eco.plot(xarr, recarr.interest_amo, label='interest rate',
+        color='blue', linestyle='dashed')
+eco.plot(xarr, recarr.ex_long, label='long-run exchange rate (USD / AMO)',
+        color='green', linestyle='solid', linewidth=6, alpha=0.3)
+eco.plot(xarr, recarr.usdperamo, label='current exchange rate (USD / AMO)',
+        color='green', linestyle='solid')
+eco.plot(xarr, recarr.step_txgen, #label='new txs',
+        color='black', linestyle='solid', linewidth=6, alpha=0.3)
+eco.plot(xarr, recarr.step_txproc, #label='processed txs',
+        color='black', linestyle='dashed')
+eco.plot(xarr, recarr.txpending, #label='pending txs',
+        color='darkgray', linestyle='dashed')
+
+ass.legend(loc='best')
+eco.legend(loc='lower right')
 
 plt.show()
