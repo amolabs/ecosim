@@ -4,10 +4,11 @@
 \usepackage{amsmath,amsfonts}
 
 \usepackage{authblk}
+\usepackage{graphicx}
 \usepackage{enumitem}
 \setdescription{style=nextline}
 
-\newcommand{\dd}{\text{\textdollar}}
+\newcommand{\usd}{\text{\textdollar}}
 \newcommand{\ee}{\text{\texteuro}}
 \newcommand{\amo}{$\mathbb{A}$\ }
 \newcommand{\amom}{\mathbb{A}}
@@ -171,7 +172,7 @@ simulation state includes the following variables:
 	\item[$P_\amom$] Price level of the AMO economy
 	\item[$Y$] Production yield of the AMO economy during the current
 		simulation step (\emph{measured in dollar})
-	\item[$E_{\$/\amom}$] Exchange rate quoted as dollar per one AMO
+	\item[$E_{\usd/\amom}$] Exchange rate quoted as dollar per one AMO
 		(\emph{dollar price of one AMO})
 \end{description}
 
@@ -289,43 +290,43 @@ Law of One Price
 
 The \textbf{purchasing power parity(PPP)} condition[2].
 \begin{eqnarray}
-	\text{equilibrium at\ } E_{\dd/\amom} = P_\dd / P_\amom \label{eq:3}
+	\text{equilibrium at\ } E_{\usd/\amom} = P_\usd / P_\amom \label{eq:3}
 \end{eqnarray}
 
 \textbf{TODO: implications of the above equation. with the law of one price.
 with free trade condition.}
 
-Given $P_\dd$, we can use the above condition \eqref{eq:3} to calculate
-expected future exchange rate in the long run ($E^e_{\dd/\amom}$).
+Given $P_\usd$, we can use the above condition \eqref{eq:3} to calculate
+expected future exchange rate in the long run ($E^e_{\usd/\amom}$).
 
 \subsubsection{Interest Parity Condition}
 The \textbf{interest parity} condition[1] states a condition when the currency
 exchange market is in equilibrium. We have two economy systems: dollar system
-and AMO system. Each of the systems has its own domestic currency, dollar(\dd)
+and AMO system. Each of the systems has its own domestic currency, dollar(\usd)
 for dollar system, and AMO coins for AMO system. We can think of a currency
 exchange market where dollar and AMO coins are bought and sold. When we denote
-$E_{\dd/\amom}$ as a dollar price of one AMO coin, the currency exchange market
+$E_{\usd/\amom}$ as a dollar price of one AMO coin, the currency exchange market
 is in equilibrium when the following condition holds.
 \begin{eqnarray}
-	\text{dollar return rate} = R_\dd \\
-	\text{AMO return rate} = R_\amom + \frac{(E^e_{\dd/\amom} - E_{\dd/\amom})}
-	{E_{\dd/\amom}} \\
+	\text{dollar return rate} = R_\usd \\
+	\text{AMO return rate} = R_\amom + \frac{(E^e_{\usd/\amom} - E_{\usd/\amom})}
+	{E_{\usd/\amom}} \\
 	\text{equilibrium at\ } \text{dollar return rate} = \text{AMO return rate} \\
-	\implies R_\dd = R_\amom + \frac{(E^e_{\dd/\amom} - E_{\dd/\amom})}
-	{E_{\dd/\amom}} \label{eq:2}
+	\implies R_\usd = R_\amom + \frac{(E^e_{\usd/\amom} - E_{\usd/\amom})}
+	{E_{\usd/\amom}} \label{eq:2}
 \end{eqnarray}
-$R_\dd$ is the interest rate of the dollar system(we can say just
-\emph{outer world}), $R_\amom$ is of the AMO system, $E_{\dd/\amom}$ is the
-dollar price of one AMO, and $E^e_{\dd/\amom}$ is the expected dollar price of
+$R_\usd$ is the interest rate of the dollar system(we can say just
+\emph{outer world}), $R_\amom$ is of the AMO system, $E_{\usd/\amom}$ is the
+dollar price of one AMO, and $E^e_{\usd/\amom}$ is the expected dollar price of
 one AMO after one year from now.
 
 \textbf{TODO: implications of the above equation.}
 
 We use the above condition \eqref{eq:2} to calculate short-run exchange rate
-change. Note that $R_\dd$ is given as a domain parameter, $R_\amom$ is
+change. Note that $R_\usd$ is given as a domain parameter, $R_\amom$ is
 calculcated from $S$, $T$ and $r$.
 \begin{equation}
-	E'_{\dd/\amom} = \frac{E^e_{\dd/\amom}}{R_\dd - R_\amom + 1}
+	E'_{\usd/\amom} = \frac{E^e_{\usd/\amom}}{R_\usd - R_\amom + 1}
 \end{equation}
 
 \section{Other Assumptions}
@@ -406,6 +407,7 @@ The approach functions take two input parameters, the current and the target,
 and output one result value. These functions also utilizes the simulation step
 size from the domain parameter.
 
+\subsubsection{Approach Unit Function}
 An approach function $f_\tau(\text{current}, \text{target}, \text{time})$ has
 the following characterstics:
 \begin{itemize}
@@ -443,7 +445,7 @@ a) \times 100^{-t/\tau}$.
 State variables with short-run change move to their destination(usually the
 equilibrium point) rather quickly. All else equal, these variables reach their
 destination in a few siumulation days. Affected variables are $S$, $F$ and
-$E_{\dd/\amom}$. For this purpose, we set $\tau$ to be 3 days. Of course, the
+$E_{\usd/\amom}$. For this purpose, we set $\tau$ to be 3 days. Of course, the
 input parameter $t$ must be adjusted to be in scale of days.
 
 \subsubsection{Long-Run Changes}
@@ -451,6 +453,8 @@ State variables with long-run chagne move to their destination rather slowly.
 All else equal, these variables reach their destination in a year roughly.
 Affected variables are $P_\amom$. For this purpose, we set $\tau$ to be 1 year.
 Of course, the input parameter $t$ must be adjusted to be in scale of years.
+
+\subsubsection{Inertia and Momentum}
 
 \subsection{Economy Output}
 The GDP function gives $Y$ value at each simulation step according to the
@@ -468,5 +472,119 @@ $S + M^A - M^d$. Let the output from the change function to be $\Delta$.
 Set $S_i = S_{i-1} + \Delta$ and $M^A_i = M^A_{i-1} - \Delta$.
 
 \section{Simulation Results}
+
+\subsection{Scenarios}
+We prepared 3 scenarios for the AMO economy simulation regarding the market
+trends:
+\begin{enumerate}
+	\item{Constant weak output} (section \ref{sc1})
+	\item{Constant weak output with additional positive expectation} (section \ref{sc1.1})
+	\item{Constant high output} (section \ref{sc2})
+	\item{Constant high output with additional positive expectation} (section \ref{sc2.1})
+	\item{Start weak and grows} (section \ref{sc3})
+	\item{Start weak and grows with additional positive expectation} (section \ref{sc3.1})
+\end{enumerate}
+All the scenarios have identical initial state except market trend. The initial
+state is as the following:
+\begin{itemize}
+	\item{total coins($M$) = 20,000,000,000 AMO}
+	\item{active coins($M^A$) = 19,000,000,000 AMO}
+	\item{dormant coins($M^D$) = 0 AMO}
+	\item{lost coins($M^L$) = 0 AMO}
+	\item{stakes($S$) = 100,000,000 AMO}
+	\item{interest rate of AMO($R_\amom$) = 0.1}
+	\item{interest rate of USD($R_\usd$) = 0.02 (stays constant)}
+	\item{price level of AMO world($P_\amom$) = 1}
+	\item{price level of USD world($P_\usd$) = 1 (stays constant)}
+	\item{exchange rate as dollar per AMO($E_{\usd/\amom}$) = 0.0005}
+\end{itemize}
+
+\textbf{TODO: Additional positive expectation.}
+
+\subsection{Scenario 1: Constant Weak Output}
+\label{sc1}
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{fig/fig1.pdf}
+	\caption{(scenario 1) constant weak output}
+	\label{fig:sc1}
+\end{figure}
+
+Figure \ref{fig:sc1} shows the simulation result of scenario 1 over the time
+span of 5,000 days. The upper part of the figure shows the trend of assets in
+AMO blockchain economy, while the lower part shows the various metrics
+calculated from the blockchain state. The most important line here is the
+output trend. We set the output to be constant value 1,000, meaning 1,000\$
+worth of trade during 1 year. The output, together with price level, decides
+the settling points for various assets. In a short run, the price level is
+considered fixed, and it decides the money demand along with the interest rate.
+Money demand controls the amount of stakes and active coins. Stakes are
+changing as a medium-run variable(slower than short-run variables, but faster
+than long-run variables) according to the money demand. With stakes changing in
+medium-run pace, the price level is adjusted in a long-run pace. Once the
+stakes and active coins settle down first, the price level is adjusted
+gradually. Since short-run and medium-run variables settle down according to
+the long-run variable(price level), all the other metrics now follows the
+gradual change of the price level.
+
+One thing to note is that the price level is high since the output is low. This long-run price level is driving overall pace of all the other variables.
+
+The exchange rate is a short-run variable, but there is also an expected
+exchange rate in the long-run. After the short-run exchange rate settles down
+to some point quickly, it follows the long-run change expected exchange rate,
+which is determined by the price level. You can see the broad green
+line(expected exchange rate) is the upside down image of the cyan line(price
+level).
+
+In this scenario, everything looks rather gloomy: too much active coins, low
+exchange rate(bad for coin holders regarding coin value), and high price
+level(bad for real customers).
+
+\subsection{Scenario 1 with Additional Positive Expectation}
+\label{sc1.1}
+
+\subsection{Scenario 2: Constant High Output}
+\label{sc2}
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{fig/fig2.pdf}
+	\caption{(Scenario 2) Constant high output}
+	\label{fig:sc2}
+\end{figure}
+
+Figure \ref{fig:sc2} shows the simulation result of scenario 2 over the time
+span of 5,000 days. We set the output to be constant value 10,000,000, meaning
+10,000,000\$ worth of trade during 1 year, which is 10,000 times higher than
+the scenario 1. The dynamics of the economy is prettey much the same as the
+scenario 1, but with high output, the price level is lower than the scenario 1
+by a factor of 8.
+
+\subsection{Scenario 2 with Additional Positive Expectation}
+\label{sc2.1}
+
+\subsection{Scenario 3: Start Weak and Grows}
+\label{sc3}
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{fig/fig3.pdf}
+	\caption{(Scenario 3) Start weak and grows}
+	\label{fig:sc3}
+\end{figure}
+We use the following output function:
+\begin{equation}
+	c_2x^2 + c_1x + c_0,
+\end{equation}
+where $c_2$, $c_1$ and $c_0$ are chosen to be 10,000, 10,000 and 1,000,
+respectively. The output of the function is translated as dollar amount of
+trades during one year.
+
+Figure \ref{fig:sc3} shows the simulation result of scenario 3 over the time
+span of 5,000 days.
+
+\subsection{Scenario 3 with Additional Positive Expectation}
+\label{sc3.1}
 
 \end{document}

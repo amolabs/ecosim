@@ -106,10 +106,13 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# tex
-*.aux
-*.fdb_latexmk
-*.fls
-*.pdf
-*.synctex.gz
+# tags
 tags
+
+# tex
+paper/*.aux
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.pdf
+paper/*.synctex.gz
+!paper/fig/*
